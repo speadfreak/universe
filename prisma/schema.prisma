@@ -1,0 +1,252 @@
+// Universe Medical Center — database schema
+// PostgreSQL (Neon) · UUIDs · indexes · soft-delete via visible/status flags · timestamps
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────── Admin & Audit ─────────────────────────
+
+model AdminUser {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String     @default("")
+  role         String     @default("editor") // super_admin | editor | receptionist
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorEmail String
+  action     String // created | updated | deleted | login | ...
+  entity     String // service | doctor | post | section | setting ...
+  entityId   String   @default("")
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ───────────────────────── Content (editable) ─────────────────────────
+
+// Structured section content for every page/section, bilingual (en + am stored together)
+model PageSection {
+  id         String   @id @default(uuid())
+  page       String // home | about | contact | resources | book | packages | doctors | blog | global | footer | error
+  sectionKey String
+  data       Json // { en: {...}, am: {...}, media: {...} }
+  visible    Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([page, sectionKey])
+  @@index([page])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────── Collections ─────────────────────────
+
+model Service {
+  id         String   @id @default(uuid())
+  slug       String   @unique
+  icon       String   @default("stethoscope")
+  image      String   @default("")
+  titleEn    String
+  titleAm    String   @default("")
+  taglineEn  String   @default("")
+  taglineAm  String   @default("")
+  excerptEn  String   @default("")
+  excerptAm  String   @default("")
+  bodyEn     String   @default("") // markdown
+  bodyAm     String   @default("")
+  features   Json     @default("[]") // [{en, am}]
+  process    Json     @default("[]") // [{en, am}]
+  expect     Json     @default("[]") // [{en, am}]
+  faqs       Json     @default("[]") // [{q:{en,am}, a:{en,am}}]
+  order      Int      @default(0)
+  visible    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Doctor {
+  id            String   @id @default(uuid())
+  nameEn        String
+  nameAm        String   @default("")
+  specialtyEn   String
+  specialtyAm   String   @default("")
+  credentials   String   @default("")
+  bioEn         String   @default("")
+  bioAm         String   @default("")
+  languages     String   @default("English, Amharic")
+  photo         String   @default("")
+  isPlaceholder Boolean  @default(true)
+  order         Int      @default(0)
+  visible       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Package {
+  id        String   @id @default(uuid())
+  nameEn    String
+  nameAm    String   @default("")
+  descEn    String   @default("")
+  descAm    String   @default("")
+  items     Json     @default("[]") // [{en, am}]
+  price     String   @default("") // "" => "Contact us"
+  featured  Boolean  @default(false)
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogPost {
+  id             String    @id @default(uuid())
+  slug           String    @unique
+  title          String
+  excerpt        String    @default("")
+  content        String    @default("") // markdown
+  category       String    @default("Your Health")
+  tags           Json      @default("[]")
+  coverImage     String    @default("")
+  readingTime    Int       @default(5)
+  status         String    @default("published") // draft | published | scheduled
+  publishedAt    DateTime?
+  seoTitle       String    @default("")
+  seoDescription String    @default("")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+}
+
+model Testimonial {
+  id            String   @id @default(uuid())
+  name          String
+  role          String   @default("")
+  quote         String
+  rating        Int      @default(5)
+  photo         String   @default("")
+  isPlaceholder Boolean  @default(true)
+  order         Int      @default(0)
+  visible       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model Faq {
+  id        String   @id @default(uuid())
+  questionEn String
+  questionAm String  @default("")
+  answerEn  String
+  answerAm  String   @default("")
+  category  String   @default("general")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model GalleryItem {
+  id        String   @id @default(uuid())
+  title     String   @default("")
+  type      String   @default("image") // image | video
+  url       String
+  alt       String   @default("")
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Branch {
+  id          String   @id @default(uuid())
+  nameEn      String
+  nameAm      String   @default("")
+  addressEn   String
+  addressAm   String   @default("")
+  phone       String   @default("")
+  hours       String   @default("")
+  hoursAm     String   @default("")
+  mapEmbedUrl String   @default("")
+  established String   @default("")
+  noteEn      String   @default("")
+  order       Int      @default(0)
+  visible     Boolean  @default(true)
+}
+
+// ───────────────────────── Inbox ─────────────────────────
+
+model ContactMessage {
+  id         String   @id @default(uuid())
+  name       String
+  phone      String   @default("")
+  email      String   @default("")
+  department String   @default("")
+  message    String
+  status     String   @default("new") // new | confirmed | completed | cancelled
+  notes      String   @default("")
+  createdAt  DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Appointment {
+  id            String   @id @default(uuid())
+  reference     String   @unique
+  serviceId     String?
+  doctorId      String?
+  serviceName   String   @default("")
+  doctorName    String   @default("")
+  date          DateTime
+  timeSlot      String
+  patientName   String
+  phone         String
+  email         String   @default("")
+  notes         String   @default("")
+  status        String   @default("new") // new | confirmed | completed | cancelled
+  source        String   @default("website") // website | api | hms
+  internalNotes String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([date])
+  @@index([status, createdAt])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// ───────────────────────── Media library ─────────────────────────
+// Binary stored in Postgres so it works on any host (Supabase Storage adapter is a drop-in upgrade — see docs/HMS_INTEGRATION.md)
+
+model MediaAsset {
+  id        String   @id @default(uuid())
+  name      String
+  type      String // mime, e.g. image/jpeg
+  size      Int
+  alt       String   @default("")
+  data      Bytes
+  createdAt DateTime @default(now())
+}
