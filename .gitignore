@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files — never commit real secrets, but DO ship the example
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,7 +41,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-local-*
+# stray local scratch files in the project root only
+# (must NOT match src/**/local-*.ts — that broke local-db-adapter on Vercel)
+/local-*
 .claude
 .z-ai-config
 *.log
