@@ -1,36 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Manrope, Noto_Sans_Ethiopic, Noto_Serif_Ethiopic } from "next/font/google";
+/* Self-hosted variable fonts — no build-time Google Fonts fetch (Vercel-safe) */
+import "@fontsource-variable/fraunces/full.css";
+import "@fontsource-variable/manrope";
+import "@fontsource-variable/noto-serif-ethiopic";
+import "@fontsource-variable/noto-sans-ethiopic";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-
-/* refined serif display for headlines (Ethiopic glyphs fall back to Noto Serif Ethiopic) */
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-serif-display",
-  display: "swap",
-  axes: ["opsz", "SOFT", "WONK"],
-});
-
-/* clean grotesk for body and UI */
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const notoSerifEthiopic = Noto_Serif_Ethiopic({
-  subsets: ["ethiopic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-serif-ethiopic",
-  display: "swap",
-});
-
-const notoEthiopic = Noto_Sans_Ethiopic({
-  subsets: ["ethiopic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ethiopic",
-  display: "swap",
-});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://universemedical.et";
 
@@ -130,7 +105,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fraunces.variable} ${manrope.variable} ${notoSerifEthiopic.variable} ${notoEthiopic.variable} antialiased bg-porcelain text-ink`}
+        className="antialiased bg-porcelain text-ink"
       >
         <script
           type="application/ld+json"

@@ -3,6 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Self-hosted variable fonts (@fontsource) — no build-time Google Fonts fetch */
+:root {
+  --font-serif-display: "Fraunces Variable", Georgia, serif;
+  --font-body: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif-ethiopic: "Noto Serif Ethiopic Variable", serif;
+  --font-ethiopic: "Noto Sans Ethiopic Variable", sans-serif;
+}
+
 /* ─────────────────────────────────────────────────────────────
    UNIVERSE MEDICAL CENTER · "PORCELAIN & CRIMSON"
    Derived from the logo: white wordmark, vivid red monogram, dark ground.
