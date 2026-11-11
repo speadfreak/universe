@@ -65,3 +65,4 @@ db/*.sqlite
 .zscripts/
 tool-results/
 agent-ctx/
+upload/

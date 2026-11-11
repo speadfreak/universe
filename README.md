@@ -10,6 +10,12 @@ This is a cinematic, fully bilingual (**English / አማርኛ**) single-page cl
 - **Prisma** + **PostgreSQL** (Neon) for content, media, and appointments
 - Custom admin panel for content, collections, media, and the appointments inbox
 
+## Brand identity — "Porcelain & Crimson"
+
+The visual system is warm and clinical, derived from the logo (white wordmark, vivid red monogram, dark ground): porcelain/bone light surfaces (55%), ink/graphite/oxblood dark surfaces (30%), crimson as the single decisive accent (10%), surgical scrub green used rarely (5%). Typography pairs **Fraunces** (serif display, Ethiopic fallback Noto Serif Ethiopic) with **Manrope** (grotesk body/UI). The super admin can retune the accent from **Admin → Settings → Brand accent**; a built-in WCAG AA contrast checker blocks inaccessible choices.
+
+> **Photography note:** all clinic imagery currently ships as AI-generated placeholders with a consistent warm grade (`public/img/`). **Replace them with real clinic photography** — upload through **Admin → Media library**, then set each image via the picker in Content sections / Services / Doctors / Gallery / Hero poster. The hero also accepts a real video (Admin → Settings → Hero media); without one it falls back to the warm gradient + ECG scene.
+
 ## Features
 
 **Public site**
@@ -23,8 +29,11 @@ This is a cinematic, fully bilingual (**English / አማርኛ**) single-page cl
 
 - Content editor for every page section, driven by the section registry
 - Collections CRUD: services, doctors, packages, blog posts, testimonials, FAQs, gallery items, branches
-- **Media library** — uploads stored in Postgres (`bytea`) and served through `/api/media/[id]`
+- **Media library** — uploads stored in Postgres (`bytea`) and served through `/api/media/[id]`; every image on the site (hero poster, logo, services, doctors, gallery, posts, testimonials) is replaceable from the admin
 - **Appointments inbox** — review, confirm, and cancel patient appointment requests
+- **Brand accent editor** with a live WCAG AA contrast checker (super admin)
+- **Admin user management** — super admins add/edit/delete admins and set roles; every admin can change their own name, email and password from **My account** (email/password changes re-verify the current password; the last super admin cannot be removed or demoted)
+- Light/dark admin themes derived from the same brand tokens
 - Role-based access: `super_admin`, `editor`, `receptionist`
 
 **Platform**

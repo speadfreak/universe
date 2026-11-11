@@ -100,7 +100,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
             animate={{ opacity: phase === "exit" ? 0 : 1, scale: phase === "exit" ? 0.94 : 1 }}
             transition={{ duration: 0.32, ease: "easeIn" }}
           >
-            {/* ECG sweep */}
+            {/* ECG sweep — decisive crimson line, no glow */}
             <svg
               viewBox="0 0 900 140"
               className="absolute left-1/2 top-1/2 w-[min(92vw,900px)] -translate-x-1/2 -translate-y-1/2"
@@ -109,12 +109,11 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
               <path
                 d="M0 70 h250 l18-22 24 46 20-58 16 34 h70 l14-20 20 34 16-26 12 12 H900"
                 fill="none"
-                stroke="#38D6FF"
+                stroke="#E3202B"
                 strokeWidth="2.5"
                 strokeLinecap="round"
-                strokeOpacity={reduced ? 0.5 : 0.85}
+                strokeOpacity={reduced ? 0.5 : 0.9}
                 className={reduced ? "" : "ecg-line"}
-                style={{ filter: "drop-shadow(0 0 8px rgba(56,214,255,0.55))" }}
               />
             </svg>
 
@@ -126,17 +125,6 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
               animate="show"
               aria-hidden="true"
             >
-              <defs>
-                <filter id="pre-glow" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="3.4" result="b" />
-                  <feMerge>
-                    <feMergeNode in="b" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              {/* stethoscope circle draws itself */}
               <motion.circle
                 cx="100"
                 cy="100"
@@ -161,7 +149,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
               <motion.path
                 d="M58 56 v50 a34 34 0 0 0 68 0 V56"
                 fill="none"
-                stroke="#E31E24"
+                stroke="#E3202B"
                 strokeWidth="17"
                 strokeLinecap="round"
                 pathLength={1}
@@ -169,7 +157,6 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
                   hidden: { strokeDasharray: 1, strokeDashoffset: 1, opacity: 0 },
                   show: { strokeDashoffset: 0, opacity: 1, transition: { duration: 0.75, delay: 0.9, ease: "easeOut" } },
                 }}
-                filter="url(#pre-glow)"
               />
 
               {/* white M draws */}
@@ -185,7 +172,6 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
                   hidden: { strokeDasharray: 1, strokeDashoffset: 1, opacity: 0 },
                   show: { strokeDashoffset: 0, opacity: 1, transition: { duration: 0.75, delay: 1.25, ease: "easeOut" } },
                 }}
-                filter="url(#pre-glow)"
               />
 
               {/* medical cross node */}
@@ -196,7 +182,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
                 }}
                 style={{ originX: "100px", originY: "44px" }}
               >
-                <circle cx="100" cy="44" r="10" fill="#E31E24" />
+                <circle cx="100" cy="44" r="10" fill="#E3202B" />
                 <path d="M100 38.5 v11 M94.5 44 h11" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
               </motion.g>
 
@@ -207,13 +193,13 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
                   show: { opacity: 1, transition: { delay: 1.9, duration: 0.4 } },
                 }}
               >
-                <circle cx="150" cy="126" r="9" fill="#E31E24" className="pulse-dot" />
+                <circle cx="150" cy="126" r="9" fill="#E3202B" className="pulse-dot" />
                 <motion.circle
                   cx="150"
                   cy="126"
                   r="9"
                   fill="none"
-                  stroke="#E31E24"
+                  stroke="#E3202B"
                   strokeWidth="2"
                   animate={reduced ? {} : { r: [9, 22], opacity: [0.9, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity, delay: 2, ease: "easeOut" }}
@@ -244,7 +230,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
                 ))}
               </div>
               <motion.div
-                className="mt-1 font-display text-[clamp(0.95rem,3vmin,1.3rem)] font-medium tracking-[0.06em] text-clinic-red"
+                className="mt-1 font-body text-[clamp(0.95rem,3vmin,1.3rem)] font-semibold tracking-[0.06em] text-crimson"
                 variants={{
                   hidden: { opacity: 0, y: 10 },
                   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: easeOut } },
@@ -257,7 +243,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
             {/* progress */}
             {!reduced && (
               <motion.div
-                className="mt-8 flex items-center gap-3 font-display text-sm tracking-[0.3em] text-ice-dim"
+                className="mt-8 flex items-center gap-3 font-body text-sm tracking-[0.3em] text-porcelain/45"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
@@ -271,7 +257,7 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
           {phase === "show" && (
             <button
               onClick={skip}
-              className="absolute right-5 top-5 z-20 rounded-full border border-white/15 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-ice-dim transition hover:border-cyan/50 hover:text-cyan"
+              className="absolute right-5 top-5 z-20 rounded-[10px] border border-porcelain/20 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-porcelain/55 transition hover:border-crimson hover:text-porcelain"
             >
               Skip
             </button>

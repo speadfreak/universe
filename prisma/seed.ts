@@ -54,8 +54,8 @@ async function loadContentModules() {
 }
 
 async function seedAdmin() {
-  const email = (process.env.ADMIN_EMAIL || "admin@universemedical.et").toLowerCase();
-  const password = process.env.ADMIN_PASSWORD || "UniverseMC@2026";
+  const email = (process.env.ADMIN_EMAIL || "admin@gmail.com").toLowerCase();
+  const password = process.env.ADMIN_PASSWORD || "admin_password";
   const name = process.env.ADMIN_NAME || "Super Admin";
   const existing = await prisma.adminUser.findUnique({ where: { email } });
   if (existing) {
@@ -90,6 +90,7 @@ async function seedSettings() {
     seoDescription:
       "Compassionate, patient-first care backed by modern diagnostics. Internal medicine, labs, imaging and more in Addis Ababa and Ambo.",
     defaultLocale: "en",
+    accentColor: "#E3202B",
     amharicReviewFlag: true,
   };
   for (const [key, value] of Object.entries(defaults)) {
@@ -123,6 +124,7 @@ async function seedServices() {
   const services = [
     {
       slug: "internal-medicine-care",
+      image: "/img/svc-internal-medicine-care.jpg",
       icon: "stethoscope",
       titleEn: "Internal Medicine Care",
       titleAm: "የውስጥ ሕክምና እንክብካቤ",
@@ -156,11 +158,11 @@ async function seedServices() {
         { q: { en: "Do I need an appointment?", am: "ቀን ማስያዝ ያስፈልገኛል?" }, a: { en: "Walk-ins are welcome, but booking guarantees a shorter wait. Call 0116390354 or use the online form.", am: "በቀጥታ መምጣት ይቻላል፤ ግን ቀን ማስያዝ የመጠበቅ ጊዜዎን ያሳጥራል።" } },
         { q: { en: "Can I choose my doctor?", am: "ሐኪሜን መምረጥ እችላለሁ?" }, a: { en: "Yes — pick a doctor during booking, or choose “No preference” for the first available specialist.", am: "አዎ — በማስያዝ ጊዜ ሐኪም ይምረጡ።" } },
       ],
-      image: "/img/about-teaser.jpg",
       order: 0,
     },
     {
       slug: "specialist-consultations",
+      image: "/img/svc-specialist-consultations.jpg",
       icon: "user-round-check",
       titleEn: "Specialist Consultations",
       titleAm: "የስፔሻሊስት ምክክር",
@@ -191,11 +193,11 @@ async function seedServices() {
       faqs: [
         { q: { en: "Do I need a referral?", am: "ሪፈራል ያስፈልገኛል?" }, a: { en: "No referral is required — but bringing one (or previous results) helps us help you faster.", am: "ሪፈራል አያስፈልግም — ግን የነበሩ ውጤቶች ይረዳሉ።" } },
       ],
-      image: "/img/gallery-4.jpg",
       order: 1,
     },
     {
       slug: "laboratory-diagnostic-tests",
+      image: "/img/svc-laboratory-diagnostic-tests.jpg",
       icon: "flask-conical",
       titleEn: "Laboratory & Diagnostic Tests",
       titleAm: "ላብራቶሪ እና ምርመራ",
@@ -227,11 +229,11 @@ async function seedServices() {
         { q: { en: "When will I get my results?", am: "ውጤቴ መቼ ይወጣል?" }, a: { en: "Most routine tests are ready the same day. Specialized panels may take longer — staff will tell you the exact time.", am: "አብዛኞቹ የዚህ ቀን ናቸው። ልዩ ምርመራዎች ጊዜ ሊወስዱ ይችላሉ።" } },
         { q: { en: "Do I need to fast?", am: "ማዝናት ያስፈልገኛል?" }, a: { en: "Some tests need 8–12 hours without food. Our team confirms when you book.", am: "አንዳንድ ምርመራዎች 8–12 ሰዓት ያለምግብ ይፈልጋሉ።" } },
       ],
-      image: "/img/gallery-3.jpg",
       order: 2,
     },
     {
       slug: "imaging-radiology",
+      image: "/img/svc-imaging-radiology.jpg",
       icon: "scan-heart",
       titleEn: "Imaging & Radiology",
       titleAm: "ምስል እና ራዲዮሎጂ",
@@ -262,11 +264,11 @@ async function seedServices() {
       faqs: [
         { q: { en: "Is X-ray safe?", am: "ኤክስሬይ አስተማማኝ ነው?" }, a: { en: "Modern digital X-ray uses very low doses. We always weigh benefit and safety, and avoid imaging in pregnancy unless essential.", am: "ዘመናዊ ኤክስሬይ በጣም ያነሰ መጠን ይጠቀማል።" } },
       ],
-      image: "/img/gallery-2.jpg",
       order: 3,
     },
     {
       slug: "patient-care-emergency",
+      image: "/img/svc-patient-care-emergency.jpg",
       icon: "siren",
       titleEn: "Patient Care & Emergency Services",
       titleAm: "የታካሚ እንክብካቤ እና አስቸኳይ አገልግሎት",
@@ -297,11 +299,11 @@ async function seedServices() {
       faqs: [
         { q: { en: "What counts as an emergency?", am: "ምን አስቸኳይ ይባላል?" }, a: { en: "Chest pain, severe breathing difficulty, unconsciousness, heavy bleeding, stroke signs and serious injuries — come immediately or call 0116390354.", am: "የደረት ሕመም፣ ከባድ የትንፋሽ ችግር፣ ማወቅ አለመቻል፣ ከባድ ደም መፍሰስ — ወዲያውኑ ይምጡ ወይም ይደውሉ።" } },
       ],
-      image: "/img/hero-poster.jpg",
       order: 4,
     },
     {
       slug: "digital-health-clinic-solutions",
+      image: "/img/svc-digital-health-clinic-solutions.jpg",
       icon: "monitor-smartphone",
       titleEn: "Digital Health & Clinic Solutions",
       titleAm: "ዲጂታል ጤና እና የክሊኒክ መፍትሔዎች",
@@ -330,7 +332,6 @@ async function seedServices() {
       faqs: [
         { q: { en: "Can my company partner with the clinic?", am: "ድርጅቴ ከክሊኒኩ ጋር መተባበር ይችላል?" }, a: { en: "Yes — contact us via the contact form or call 0116390354 to design a corporate program.", am: "አዎ — በአግኙን ገጽ ወይም በስልክ ያግኙን።" } },
       ],
-      image: "/img/gallery-1.jpg",
       order: 5,
     },
   ];

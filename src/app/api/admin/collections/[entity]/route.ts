@@ -23,13 +23,16 @@ export async function GET(req: Request, { params }: Ctx) {
   const searchField = def.fields.titleEn ? "titleEn" : def.fields.nameEn ? "nameEn" : def.fields.name ? "name" : def.fields.questionEn ? "questionEn" : def.fields.title ? "title" : null;
   const where = q && searchField ? { [searchField]: { contains: q, mode: "insensitive" as const } } : {};
 
+  // AdminUser has no `order` column — order by creation instead
+  const orderBy = entity === "admins" ? [{ createdAt: "desc" as const }] : [{ order: "asc" as const }, { createdAt: "desc" as const }];
+
   const delegate = db[def.model] as unknown as {
     findMany: (o: object) => Promise<unknown[]>;
     count: (o: object) => Promise<number>;
   };
 
   const [items, total] = await Promise.all([
-    delegate.findMany({ where, orderBy: [{ order: "asc" }, { createdAt: "desc" }], skip, take }),
+    delegate.findMany({ where, orderBy, skip, take }),
     delegate.count({ where }),
   ]);
 
@@ -63,6 +66,10 @@ export async function POST(req: Request, { params }: Ctx) {
      
     const created = await (db[def.model] as any).create({ data });
     await audit(admin, "created", entity, (created as { id: string }).id);
+    if (entity === "admins") {
+      const { passwordHash: _ph, ...safe } = created as Record<string, unknown>;
+      return NextResponse.json({ ok: true, data: safe }, { status: 201 });
+    }
     return NextResponse.json({ ok: true, data: created }, { status: 201 });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "";

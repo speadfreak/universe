@@ -1,17 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, Inter, Noto_Sans_Ethiopic } from "next/font/google";
+import { Fraunces, Manrope, Noto_Sans_Ethiopic, Noto_Serif_Ethiopic } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const sora = Sora({
+/* refined serif display for headlines (Ethiopic glyphs fall back to Noto Serif Ethiopic) */
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-serif-display",
+  display: "swap",
+  axes: ["opsz", "SOFT", "WONK"],
+});
+
+/* clean grotesk for body and UI */
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
+const notoSerifEthiopic = Noto_Serif_Ethiopic({
+  subsets: ["ethiopic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-serif-ethiopic",
   display: "swap",
 });
 
@@ -70,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05070D",
+  themeColor: "#111012",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -120,7 +130,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${sora.variable} ${inter.variable} ${notoEthiopic.variable} antialiased bg-ink text-ice`}
+        className={`${fraunces.variable} ${manrope.variable} ${notoSerifEthiopic.variable} ${notoEthiopic.variable} antialiased bg-porcelain text-ink`}
       >
         <script
           type="application/ld+json"

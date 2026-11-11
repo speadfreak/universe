@@ -81,6 +81,14 @@ export function SiteProvider({ data, children }: { data: SiteData; children: Rea
     if (saved === "en" || saved === "am") setLocaleState(saved);
   }, []);
 
+  // live brand accent from Admin → Settings (WCAG-AA checked before save)
+  useEffect(() => {
+    const hex = /^#[0-9a-fA-F]{6}$/.test(data.settings.accentColor || "") ? data.settings.accentColor : "#E3202B";
+    const root = document.documentElement;
+    root.style.setProperty("--crimson", hex);
+    root.style.setProperty("--primary", hex);
+  }, [data.settings.accentColor]);
+
   useEffect(() => {
     document.documentElement.lang = locale === "am" ? "am" : "en";
   }, [locale]);
@@ -164,12 +172,16 @@ export function A({
   className,
   onClick,
   ariaLabel,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   href: string;
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
   ariaLabel?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }) {
   const { navigate } = useSite();
   const isPlainHash = href.startsWith("#");
@@ -179,6 +191,8 @@ export function A({
       className={className}
       aria-label={ariaLabel}
       data-cursor="link"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       onClick={(e) => {
         onClick?.();
         if (isPlainHash) return;

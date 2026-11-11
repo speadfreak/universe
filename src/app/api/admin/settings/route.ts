@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { audit, jsonError } from "@/server/admin/entities";
 import { SETTINGS_DEFAULTS, type SiteSettings } from "@/lib/settings-defaults";
+import { checkAccent } from "@/lib/color";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,7 @@ const EDITABLE_KEYS = new Set<keyof SiteSettings>([
   "clinicName", "tagline", "phone", "phoneIntl", "email", "addressAddis", "addressAmbo",
   "hoursEn", "hoursAm", "heroVideo", "heroPoster", "logoUrl", "preloaderEnabled",
   "announcementEnabled", "announcementEn", "announcementAm", "seoTitle", "seoDescription",
-  "defaultLocale", "amharicReviewFlag",
+  "defaultLocale", "accentColor", "amharicReviewFlag",
 ]);
 
 /** GET /api/admin/settings */
@@ -46,6 +47,14 @@ export async function PUT(req: Request) {
   for (const [key, value] of Object.entries(body)) {
     if (key === "socials" && typeof value === "object" && value !== null) {
       updates.push({ key: "socials", value: value });
+      continue;
+    }
+    // the brand accent is contrast-checked server-side — WCAG AA is not optional
+    if (key === "accentColor") {
+      if (typeof value !== "string") return jsonError("accentColor must be a hex string", "validation_error", 422);
+      const check = checkAccent(value);
+      if (!check.valid) return jsonError(check.reason || "Inaccessible accent color", "validation_error", 422);
+      updates.push({ key, value: value.toLowerCase() });
       continue;
     }
     if (!EDITABLE_KEYS.has(key as keyof SiteSettings)) continue;

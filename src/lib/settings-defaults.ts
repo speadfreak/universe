@@ -21,6 +21,8 @@ export type SiteSettings = {
   seoTitle: string;
   seoDescription: string;
   defaultLocale: "en" | "am";
+  /** brand accent — editable by the super admin, validated for WCAG AA contrast */
+  accentColor: string;
   /** informational only — Amharic copy is flagged for native-speaker review */
   amharicReviewFlag: boolean;
 };
@@ -53,5 +55,6 @@ export const SETTINGS_DEFAULTS: SiteSettings = {
   seoDescription:
     "Compassionate, patient-first care backed by modern diagnostics. Internal medicine, labs, imaging and more in Addis Ababa and Ambo.",
   defaultLocale: "en",
+  accentColor: "#E3202B",
   amharicReviewFlag: true,
 };

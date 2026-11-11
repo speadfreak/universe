@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-/** Soft glowing cursor ring — desktop pointers only, hidden on touch. */
+/** Quiet ink cursor ring with a crimson active state — desktop pointers only. */
 export function Cursor() {
   const ringRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);

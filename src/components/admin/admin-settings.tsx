@@ -1,23 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Loader2, Save, UploadCloud } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Loader2, Save, UploadCloud, Palette, ShieldAlert, ShieldCheck } from "lucide-react";
 import { api, compressImage, uploadMedia, type MediaItem } from "./admin-api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { MediaPickerModal } from "./admin-media";
+import { ACCENT_PRESETS, checkAccent } from "@/lib/color";
+import { cn } from "@/lib/utils";
 
 type Settings = {
   clinicName: string; tagline: string; phone: string; phoneIntl: string; email: string;
   addressAddis: string; addressAmbo: string; hoursEn: string; hoursAm: string;
   socials: { facebook: string; tiktok: string; google: string; linkedin: string };
-  heroVideo: string; heroPoster: string; logoUrl: string;
+  heroVideo: string; heroPoster: string; logoUrl: string; accentColor: string;
   preloaderEnabled: boolean; announcementEnabled: boolean; announcementEn: string; announcementAm: string;
   seoTitle: string; seoDescription: string; defaultLocale: string;
 };
 
-export function AdminSettings() {
+export function AdminSettings({ role }: { role: string }) {
   const router = useRouter();
+  const isSuper = role === "super_admin";
   const [s, setS] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
   const [picker, setPicker] = useState<"heroVideo" | "heroPoster" | "logoUrl" | null>(null);
@@ -29,8 +32,11 @@ export function AdminSettings() {
     });
   }, []);
 
+  const accentCheck = useMemo(() => checkAccent(s?.accentColor || "#E3202B"), [s?.accentColor]);
+  const accentChanged = !!s && s.accentColor.toLowerCase() !== "#e3202b";
+
   if (!s) {
-    return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-navy/30" /></div>;
+    return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
   }
 
   const set = (k: keyof Settings, v: unknown) => setS((prev) => (prev ? { ...prev, [k]: v } : prev));
@@ -45,16 +51,83 @@ export function AdminSettings() {
   }
 
   async function save() {
+    if (isSuper && !accentCheck.valid) {
+      toast.error("The accent color was blocked — it fails the WCAG AA contrast check.");
+      return;
+    }
     setSaving(true);
     const res = await api.put("/api/admin/settings", s);
     setSaving(false);
     if (res.ok) { toast.success("Settings saved — site updated"); router.refresh(); } else toast.error(res.error.message);
   }
 
-  const inputCls = "min-h-10 w-full rounded-xl border border-navy/12 px-3.5 text-sm focus:border-brand/50 focus:outline-none";
+  const inputCls = "min-h-10 w-full rounded-[10px] border border-border bg-background px-3.5 text-sm focus:border-crimson/60 focus:outline-none";
 
   return (
     <div className="max-w-3xl space-y-6">
+      {isSuper && (
+        <Section title="Brand accent" icon={<Palette className="h-4 w-4 text-crimson" />}>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            The single brand signal across the whole site. The crimson carries white text on every
+            primary button, so the choice is blocked unless white-on-accent clears WCAG AA (4.5:1).
+          </p>
+          <Row label="Accent color (hex)">
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="color"
+                value={/^#[0-9a-fA-F]{6}$/.test(s.accentColor) ? s.accentColor : "#E3202B"}
+                onChange={(e) => set("accentColor", e.target.value.toUpperCase())}
+                className="h-10 w-12 cursor-pointer rounded-[8px] border border-border bg-transparent p-1"
+                aria-label="Pick accent color"
+              />
+              <input
+                value={s.accentColor}
+                onChange={(e) => set("accentColor", e.target.value)}
+                className={cn(inputCls, "w-32 font-mono")}
+                dir="ltr"
+                maxLength={7}
+              />
+              <span className="flex gap-1.5">
+                {ACCENT_PRESETS.map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => set("accentColor", p)}
+                    className={cn(
+                      "h-8 w-8 rounded-full border transition",
+                      s.accentColor.toLowerCase() === p.toLowerCase() ? "border-foreground scale-110" : "border-border hover:scale-105"
+                    )}
+                    style={{ background: p }}
+                    aria-label={`Use ${p}`}
+                  />
+                ))}
+              </span>
+            </div>
+          </Row>
+
+          {/* live contrast report */}
+          <div className="flex flex-wrap items-center gap-4 rounded-[10px] border border-border bg-secondary/40 p-4">
+            <span className="inline-flex min-h-10 items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-semibold text-white" style={{ background: /^#[0-9a-fA-F]{6}$/.test(s.accentColor) ? s.accentColor : "#E3202B" }}>
+              Primary button
+            </span>
+            {accentCheck.valid ? (
+              <p className="flex items-center gap-2 text-xs font-semibold text-scrub">
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                White text on accent: {accentCheck.vsWhite?.toFixed(2)}:1 — WCAG AA pass
+              </p>
+            ) : (
+              <p className="flex items-center gap-2 text-xs font-semibold text-crimson-deep">
+                <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+                {accentCheck.reason}
+              </p>
+            )}
+          </div>
+          {accentChanged && (
+            <p className="text-xs text-muted-foreground">Save to apply the accent across the public site instantly.</p>
+          )}
+        </Section>
+      )}
+
       <Section title="Clinic identity">
         <Row label="Clinic name"><input value={s.clinicName} onChange={(e) => set("clinicName", e.target.value)} className={inputCls} /></Row>
         <Row label="Tagline"><input value={s.tagline} onChange={(e) => set("tagline", e.target.value)} className={inputCls} /></Row>
@@ -70,9 +143,9 @@ export function AdminSettings() {
       <Section title="Hero media">
         <Row label="Hero background video URL">
           <div className="flex gap-2">
-            <input value={s.heroVideo} onChange={(e) => set("heroVideo", e.target.value)} placeholder="empty = animated cinematic fallback" className={inputCls} />
-            <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-navy/12 px-3 text-xs font-bold text-navy/70 hover:border-brand/40 hover:text-brand">
-              {uploadingVideo ? <Loader2 className="h3.5 w-3.5 animate-spin" /> : <UploadCloud className="h3.5 w-3.5" />} Upload
+            <input value={s.heroVideo} onChange={(e) => set("heroVideo", e.target.value)} placeholder="empty = warm gradient + ECG fallback" className={inputCls} />
+            <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border border-border px-3 text-xs font-bold text-muted-foreground transition hover:border-crimson/50 hover:text-crimson">
+              {uploadingVideo ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UploadCloud className="h-3.5 w-3.5" />} Upload
               <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={(e) => e.target.files?.[0] && void uploadHeroVideo(e.target.files[0])} />
             </label>
           </div>
@@ -110,7 +183,7 @@ export function AdminSettings() {
       </Section>
 
       <div className="sticky bottom-4 flex justify-end">
-        <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-[#2456d6] disabled:opacity-60">
+        <button onClick={() => void save()} disabled={saving || (isSuper && !accentCheck.valid)} className="inline-flex items-center gap-2 rounded-[10px] bg-crimson px-6 py-3 text-sm font-semibold text-white shadow-warm-sm transition-colors hover:bg-crimson-deep disabled:opacity-60">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save all settings
         </button>
       </div>
@@ -129,8 +202,8 @@ export function AdminSettings() {
 function PickerInput({ value, onChange, onPick }: { value: string; onChange: (v: string) => void; onPick: () => void }) {
   return (
     <div className="flex gap-2">
-      <input value={value} onChange={(e) => onChange(e.target.value)} className="min-h-10 flex-1 rounded-xl border border-navy/12 px-3.5 text-sm focus:border-brand/50 focus:outline-none" />
-      <button type="button" onClick={onPick} className="shrink-0 rounded-xl border border-navy/12 px-3 text-xs font-bold text-navy/70 hover:border-brand/40 hover:text-brand">Choose</button>
+      <input value={value} onChange={(e) => onChange(e.target.value)} className="min-h-10 flex-1 rounded-[10px] border border-border bg-background px-3.5 text-sm focus:border-crimson/60 focus:outline-none" />
+      <button type="button" onClick={onPick} className="shrink-0 rounded-[10px] border border-border px-3 text-xs font-bold text-muted-foreground transition hover:border-crimson/50 hover:text-crimson">Choose</button>
     </div>
   );
 }
@@ -138,16 +211,16 @@ function PickerInput({ value, onChange, onPick }: { value: string; onChange: (v:
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="inline-flex cursor-pointer items-center gap-3">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-5 w-5 accent-[#2f6bff]" />
-      <span className="text-sm text-navy/60">{checked ? "On" : "Off"}</span>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-5 w-5 accent-[#E3202B]" />
+      <span className="text-sm text-muted-foreground">{checked ? "On" : "Off"}</span>
     </label>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, icon }: { title: string; children: React.ReactNode; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-navy/8 bg-white p-6">
-      <h2 className="mb-5 font-display text-sm font-bold text-navy">{title}</h2>
+    <div className="rounded-xl border border-border bg-card p-6">
+      <h2 className="mb-5 flex items-center gap-2 font-display text-[0.98rem] tracking-tight">{icon}{title}</h2>
       <div className="space-y-4">{children}</div>
     </div>
   );
@@ -156,7 +229,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{label}</span>
+      <span className="mb-1.5 block text-[0.65rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</span>
       {children}
     </label>
   );

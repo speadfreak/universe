@@ -4,7 +4,7 @@ import React from "react";
 import {
   Stethoscope, Microscope, HeartHandshake, Clock, ScanHeart, UserRoundCheck, HandCoins,
   FlaskConical, MonitorSmartphone, Siren, CalendarCheck, MessagesSquare, Stethoscope as StethIcon,
-  ShieldCheck, Sparkles, PhoneCall, MapPin, Mail, ArrowUpRight, ChevronDown, Star,
+  ShieldCheck, Sparkles, PhoneCall, MapPin, Mail, ArrowUpRight, ArrowRight, ChevronDown, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { A } from "./site-context";
@@ -47,79 +47,141 @@ type BtnProps = {
   ariaLabel?: string;
 };
 
-export function ButtonRed({ href, children, className, onClick, type = "button", disabled }: { href?: string; children: React.ReactNode; className?: string; onClick?: () => void; type?: "button" | "submit"; disabled?: boolean }) {
+/**
+ * Primary CTA — solid crimson, 10px radius, white text, and a small
+ * arrow disc that slides on hover. No glow, no cold shadow.
+ */
+export function ButtonRed({ href, children, className, onClick, type = "button", disabled, arrow = true }: { href?: string; children: React.ReactNode; className?: string; onClick?: () => void; type?: "button" | "submit"; disabled?: boolean; arrow?: boolean }) {
   const cls = cn(
-    "group relative inline-flex min-h-11 items-center justify-center gap-2 overflow-hidden rounded-full bg-clinic-red px-7 py-3 font-display text-sm font-semibold text-white transition-all duration-300 glow-red hover:scale-[1.03] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100",
+    "group inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-crimson px-6 py-3 font-body text-sm font-semibold tracking-wide text-white transition-colors duration-300 hover:bg-crimson-deep active:translate-y-px disabled:pointer-events-none disabled:opacity-55",
     className
+  );
+  const inner = (
+    <>
+      <span className="inline-flex items-center gap-2">{children}</span>
+      {arrow && (
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/18 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:bg-white/25" aria-hidden="true">
+          <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      )}
+    </>
   );
   if (href) {
     return (
       <A href={href} className={cls}>
-        <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-        <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
+        {inner}
       </A>
     );
   }
   return (
     <button type={type} onClick={onClick} disabled={disabled} className={cls}>
-      <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-      <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
+      {inner}
     </button>
   );
 }
 
-export function ButtonGlass({ href, children, className, onClick, light }: { href?: string; children: React.ReactNode; className?: string; onClick?: () => void; light?: boolean }) {
+/**
+ * Secondary CTA — quiet outline (ink on porcelain / porcelain on ink),
+ * hover fills subtly. Flat surfaces only, no blur.
+ */
+export function ButtonGhost({ href, children, className, onClick, onDark = false }: { href?: string; children: React.ReactNode; className?: string; onClick?: () => void; onDark?: boolean }) {
   const cls = cn(
-    "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-7 py-3 font-display text-sm font-semibold backdrop-blur-md transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]",
-    light
-      ? "border border-navy/15 bg-white/70 text-navy hover:bg-white"
-      : "glass text-ice hover:border-cyan/40 hover:text-cyan",
+    "group inline-flex min-h-11 items-center justify-center gap-2.5 rounded-[10px] border px-6 py-3 font-body text-sm font-semibold tracking-wide transition-all duration-300 active:translate-y-px",
+    onDark
+      ? "border-porcelain/30 text-porcelain hover:border-porcelain/70 hover:bg-porcelain/6"
+      : "border-ink/22 text-ink hover:border-ink/60 hover:bg-ink/4",
     className
   );
-  if (href) return <A href={href} className={cls}>{children}</A>;
-  return <button type="button" onClick={onClick} className={cls}>{children}</button>;
+  const inner = (
+    <>
+      <span className="inline-flex items-center gap-2">{children}</span>
+      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+    </>
+  );
+  if (href) return <A href={href} className={cls}>{inner}</A>;
+  return <button type="button" onClick={onClick} className={cls}>{inner}</button>;
 }
 
-/* ── Section heading ─────────────────────────────────────── */
+/** Animated underline text link — the editorial secondary action. */
+export function LinkUnderline({ href, children, className, onDark = false, onClick }: { href: string; children: React.ReactNode; className?: string; onDark?: boolean; onClick?: () => void }) {
+  return (
+    <A
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "group relative inline-flex items-center gap-2 pb-1 font-body text-sm font-semibold",
+        onDark ? "text-porcelain" : "text-ink",
+        className
+      )}
+    >
+      {children}
+      <span
+        className={cn(
+          "absolute inset-x-0 bottom-0 h-[1.5px] origin-left scale-x-100 transition-transform duration-300",
+          onDark ? "bg-porcelain/40" : "bg-ink/25",
+          "group-hover:bg-crimson"
+        )}
+        aria-hidden="true"
+      />
+    </A>
+  );
+}
+
+/* ── Section heading — numbered, hairline-ruled, editorial ── */
 
 export function SectionHeading({
   eyebrow,
   title,
   subtitle,
-  align = "center",
+  align = "left",
   dark = false,
+  index,
+  emphasizeLast = false,
   className,
 }: {
   eyebrow?: string;
   title: string;
   subtitle?: string;
   align?: "center" | "left";
-  dark?: boolean; // dark text for bright sections
+  dark?: boolean; // porcelain text for ink sections
+  index?: string; // "01" style numbered section label
+  emphasizeLast?: boolean; // final word set in italic serif crimson
   className?: string;
 }) {
+  const words = title.split(" ");
+  const last = emphasizeLast && words.length > 1 ? words.pop()! : null;
   return (
-    <div className={cn("max-w-2xl", align === "center" ? "mx-auto text-center" : "text-left", className)}>
+    <div className={cn("max-w-2xl", align === "center" ? "mx-auto text-center" : "text-left", dark && "on-dark", className)}>
       {eyebrow && (
         <Reveal>
-          <p className={cn("eyebrow mb-3 inline-flex items-center gap-2", dark ? "text-brand" : "text-cyan")}>
-            <span className={cn("inline-block h-px w-8", dark ? "bg-brand/60" : "bg-cyan/60")} />
+          <p className={cn("eyebrow mb-4 inline-flex items-center gap-3", dark ? "text-porcelain/60" : "text-stone-deep")}>
+            {index && <span className="num-serif text-crimson" style={{ fontSize: "0.85rem" }}>{index}</span>}
+            <span className={cn("inline-block h-px w-9", dark ? "bg-porcelain/25" : "bg-ink/20")} aria-hidden="true" />
             {eyebrow}
           </p>
         </Reveal>
       )}
-      <h2 className={cn("h1", dark ? "text-navy" : "text-ice")}>
-        <SplitWords text={title} />
+      <h2 className={cn("h1", dark ? "text-porcelain" : "text-ink")}>
+        <SplitWords text={words.join(" ")} />
+        {last && (
+          <>
+            {" "}
+            <span className="word-accent">
+              <SplitWords text={last} />
+            </span>
+          </>
+        )}
       </h2>
       {subtitle && (
         <Reveal delay={0.12}>
-          <p className={cn("mt-4 text-[1.02rem] leading-relaxed", dark ? "text-navy/70" : "text-ice-dim")}>{subtitle}</p>
+          <p className={cn("mt-4 text-[1.02rem] leading-relaxed", dark ? "text-porcelain/70" : "text-stone-deep")}>{subtitle}</p>
         </Reveal>
       )}
     </div>
   );
 }
 
-/* ── ECG divider ─────────────────────────────────────────── */
+/* ── ECG divider — a decisive crimson line, no glow ──────── */
 
 export function EcgDivider({ className }: { className?: string }) {
   return (
@@ -132,28 +194,24 @@ export function EcgDivider({ className }: { className?: string }) {
           strokeWidth="1.6"
           strokeLinecap="round"
           className="ecg-line"
-          opacity="0.6"
+          opacity="0.85"
         />
       </svg>
     </div>
   );
 }
 
-/* ── Glass card ──────────────────────────────────────────── */
+/* ── Editorial card — porcelain/bone surface + hairline ──── */
 
-export function GlassCard({ children, className, hover = true }: { children: React.ReactNode; className?: string; hover?: boolean }) {
+export function PaperCard({ children, className, hover = true }: { children: React.ReactNode; className?: string; hover?: boolean }) {
   return (
-    <div
-      className={cn(
-        "glass border-glow rounded-2xl p-6 transition-all duration-500",
-        hover && "hover:-translate-y-1.5 hover:border-cyan/35 hover:shadow-[0_18px_60px_-20px_rgba(47,107,255,0.45)]",
-        className
-      )}
-    >
+    <div className={cn("paper-card p-6", !hover && "hover:transform-none hover:border-inherit hover:shadow-none", className)}>
       {children}
     </div>
   );
 }
+
+/** Editorial card: porcelain/bone surface + hairline, hover = crimson hairline + lift */
 
 /* ── JSON-LD ─────────────────────────────────────────────── */
 
@@ -166,7 +224,7 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-/* ── Page hero banner (inner pages) ──────────────────────── */
+/* ── Page hero banner (inner pages) — editorial ink ──────── */
 
 export function PageHero({
   title,
@@ -178,23 +236,31 @@ export function PageHero({
   crumb: string;
 }) {
   return (
-    <section className="bg-mesh-dark grain relative overflow-hidden pb-16 pt-36 sm:pb-20 sm:pt-44">
-      <div className="bg-grid absolute inset-0 opacity-60" aria-hidden="true" />
-      <div className="absolute -top-24 left-1/2 h-64 w-[46rem] -translate-x-1/2 rounded-full bg-brand/20 blur-[110px]" aria-hidden="true" />
+    <section className="bg-ink-vignette grain on-dark relative overflow-hidden pb-16 pt-36 sm:pb-24 sm:pt-44">
+      {/* huge faint circle motif from the logo */}
+      <div
+        className="pointer-events-none absolute -right-40 top-10 hidden h-[30rem] w-[30rem] rounded-full border border-porcelain/8 md:block"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-24 top-28 hidden h-[30rem] w-[30rem] rounded-full border border-porcelain/5 md:block"
+        aria-hidden="true"
+      />
       <div className="container-x relative">
         <Reveal>
-          <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-ice-dim">
-            <A href="/" className="transition hover:text-cyan">Home</A>
-            <ChevronDown className="h-3 w-3 -rotate-90" aria-hidden="true" />
-            <span className="text-cyan">{crumb}</span>
+          <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-porcelain/55">
+            <A href="/" className="transition hover:text-porcelain">Home</A>
+            <span className="h-1 w-1 rounded-full bg-crimson" aria-hidden="true" />
+            <span className="text-porcelain">{crumb}</span>
           </nav>
         </Reveal>
-        <h1 className="h-display max-w-3xl text-ice">
+        <div className="rule rule-on-dark mb-8 max-w-3xl" aria-hidden="true" />
+        <h1 className="h-display max-w-3xl text-porcelain">
           <SplitWords text={title} />
         </h1>
         {subtitle && (
           <Reveal delay={0.15}>
-            <p className="lead mt-5 max-w-xl">{subtitle}</p>
+            <p className="lead lead-on-dark mt-6 max-w-xl">{subtitle}</p>
           </Reveal>
         )}
       </div>

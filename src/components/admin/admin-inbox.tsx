@@ -59,71 +59,71 @@ export function AdminInbox({ tab, onTabChange }: { tab: "messages" | "appointmen
   return (
     <div>
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="flex rounded-xl border border-navy/12 bg-white p-1">
+        <div className="flex rounded-xl border border-border bg-card p-1">
           {(["messages", "appointments"] as const).map((tb) => (
             <button
               key={tb}
               onClick={() => onTabChange(tb)}
-              className={cn("rounded-lg px-4 py-2 text-xs font-bold capitalize transition", tab === tb ? "bg-brand text-white" : "text-navy/60 hover:text-navy")}
+              className={cn("rounded-lg px-4 py-2 text-xs font-bold capitalize transition", tab === tb ? "bg-crimson text-white" : "text-muted-foreground hover:text-foreground")}
             >
               {tb}
             </button>
           ))}
         </div>
-        <label className="flex min-h-10 flex-1 items-center gap-2 rounded-xl border border-navy/12 bg-white px-3.5 sm:max-w-xs">
-          <Search className="h-4 w-4 text-navy/40" />
+        <label className="flex min-h-10 flex-1 items-center gap-2 rounded-xl border border-border bg-card px-3.5 sm:max-w-xs">
+          <Search className="h-4 w-4 text-muted-foreground" />
           <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search…" className="w-full bg-transparent py-2 text-sm focus:outline-none" />
         </label>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="min-h-10 rounded-xl border border-navy/12 bg-white px-3 text-sm focus:outline-none">
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="min-h-10 rounded-xl border border-border bg-card px-3 text-sm focus:outline-none">
           <option value="">All statuses</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         {tab === "appointments" && (
           <a
             href={`/api/admin/appointments?format=csv${statusFilter ? `&status=${statusFilter}` : ""}`}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-navy/12 bg-white px-3.5 py-2 text-xs font-bold text-navy/70 transition hover:border-brand/40 hover:text-brand"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-bold text-muted-foreground transition hover:border-crimson/50 hover:text-crimson"
           >
-            <Download className="h3.5 w-3.5" /> Export CSV
+            <Download className="h-3.5 w-3.5" /> Export CSV
           </a>
         )}
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-navy/30" /></div>
+        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : tab === "messages" ? (
         messages.length === 0 ? (
-          <p className="py-16 text-center text-sm text-navy/40">No messages found.</p>
+          <p className="py-16 text-center text-sm text-muted-foreground">No messages found.</p>
         ) : (
           <ul className="space-y-3">
             {messages.map((m) => (
-              <li key={m.id} className="rounded-2xl border border-navy/8 bg-white p-5">
+              <li key={m.id} className="rounded-2xl border border-border bg-card p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-bold text-navy">{m.name}</p>
-                    <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-navy/50">
+                    <p className="text-sm font-bold text-foreground">{m.name}</p>
+                    <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       {m.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{m.phone}</span>}
                       {m.email && <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" />{m.email}</span>}
-                      {m.department && <span className="rounded bg-navy/6 px-1.5 py-0.5">{m.department}</span>}
+                      {m.department && <span className="rounded bg-secondary px-1.5 py-0.5">{m.department}</span>}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[0.68rem] text-navy/40">{new Date(m.createdAt).toLocaleString()}</span>
+                    <span className="text-[0.68rem] text-muted-foreground">{new Date(m.createdAt).toLocaleString()}</span>
                     <StatusBadge status={m.status} />
                   </div>
                 </div>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-navy/75">{m.message}</p>
-                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-navy/6 pt-3.5">
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{m.message}</p>
+                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3.5">
                   <select
                     value={m.status}
                     onChange={(e) => void setStatus("messages", m.id, e.target.value)}
-                    className="min-h-9 rounded-lg border border-navy/12 px-2.5 text-xs font-semibold focus:outline-none"
+                    className="min-h-9 rounded-lg border border-border px-2.5 text-xs font-semibold focus:outline-none"
                   >
                     {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
-                  <button onClick={() => setExpanded(expanded === m.id ? null : m.id)} className="rounded-lg border border-navy/12 px-3 py-1.5 text-xs font-semibold text-navy/60 hover:text-navy">
+                  <button onClick={() => setExpanded(expanded === m.id ? null : m.id)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground">
                     {m.notes ? "Notes ✓" : "Add note"}
                   </button>
-                  <button onClick={() => void remove("messages", m.id)} className="ml-auto rounded-lg p-2 text-navy/40 hover:bg-clinic-red/10 hover:text-clinic-red" aria-label="Delete message">
+                  <button onClick={() => void remove("messages", m.id)} className="ml-auto rounded-lg p-2 text-muted-foreground hover:bg-crimson/10 hover:text-crimson-deep" aria-label="Delete message">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -133,7 +133,7 @@ export function AdminInbox({ tab, onTabChange }: { tab: "messages" | "appointmen
                     onBlur={(e) => void saveNotes("messages", m.id, e.target.value)}
                     rows={2}
                     placeholder="Internal notes (never shown publicly)…"
-                    className="mt-3 w-full rounded-lg border border-navy/12 px-3 py-2 text-sm focus:border-brand/50 focus:outline-none"
+                    className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-crimson/60 focus:outline-none"
                   />
                 )}
               </li>
@@ -141,42 +141,42 @@ export function AdminInbox({ tab, onTabChange }: { tab: "messages" | "appointmen
           </ul>
         )
       ) : appointments.length === 0 ? (
-        <p className="py-16 text-center text-sm text-navy/40">No appointments found.</p>
+        <p className="py-16 text-center text-sm text-muted-foreground">No appointments found.</p>
       ) : (
         <ul className="space-y-3">
           {appointments.map((a) => (
-            <li key={a.id} className="rounded-2xl border border-navy/8 bg-white p-5">
+            <li key={a.id} className="rounded-2xl border border-border bg-card p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-bold text-navy">
-                    {a.patientName} <span className="ml-1 font-mono text-xs font-normal text-navy/45">{a.reference}</span>
+                  <p className="text-sm font-bold text-foreground">
+                    {a.patientName} <span className="ml-1 font-mono text-xs font-normal text-muted-foreground">{a.reference}</span>
                   </p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-navy/50">
+                  <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1"><CalendarDays className="h-3 w-3" />{new Date(a.date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} · {a.timeSlot}</span>
                     {a.phone && <span className="inline-flex items-center gap-1"><Phone className="h-3 w-3" />{a.phone}</span>}
-                    {a.serviceName && <span className="rounded bg-navy/6 px-1.5 py-0.5">{a.serviceName}</span>}
-                    {a.doctorName && <span className="rounded bg-brand/8 px-1.5 py-0.5 text-brand">Dr. {a.doctorName}</span>}
-                    <span className="rounded bg-navy/6 px-1.5 py-0.5 uppercase">{a.source}</span>
+                    {a.serviceName && <span className="rounded bg-secondary px-1.5 py-0.5">{a.serviceName}</span>}
+                    {a.doctorName && <span className="rounded bg-crimson/10 px-1.5 py-0.5 text-crimson">Dr. {a.doctorName}</span>}
+                    <span className="rounded bg-secondary px-1.5 py-0.5 uppercase">{a.source}</span>
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[0.68rem] text-navy/40">{new Date(a.createdAt).toLocaleString()}</span>
+                  <span className="text-[0.68rem] text-muted-foreground">{new Date(a.createdAt).toLocaleString()}</span>
                   <StatusBadge status={a.status} />
                 </div>
               </div>
-              {a.notes && <p className="mt-3 rounded-lg bg-navy/4 px-3.5 py-2.5 text-sm text-navy/70">{a.notes}</p>}
-              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-navy/6 pt-3.5">
+              {a.notes && <p className="mt-3 rounded-lg bg-secondary px-3.5 py-2.5 text-sm text-muted-foreground">{a.notes}</p>}
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3.5">
                 <select
                   value={a.status}
                   onChange={(e) => void setStatus("appointments", a.id, e.target.value)}
-                  className="min-h-9 rounded-lg border border-navy/12 px-2.5 text-xs font-semibold focus:outline-none"
+                  className="min-h-9 rounded-lg border border-border px-2.5 text-xs font-semibold focus:outline-none"
                 >
                   {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button onClick={() => setExpanded(expanded === a.id ? null : a.id)} className="rounded-lg border border-navy/12 px-3 py-1.5 text-xs font-semibold text-navy/60 hover:text-navy">
+                <button onClick={() => setExpanded(expanded === a.id ? null : a.id)} className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground">
                   {a.createdAt ? "Notes" : "Add note"}
                 </button>
-                <button onClick={() => void remove("appointments", a.id)} className="ml-auto rounded-lg p-2 text-navy/40 hover:bg-clinic-red/10 hover:text-clinic-red" aria-label="Delete appointment">
+                <button onClick={() => void remove("appointments", a.id)} className="ml-auto rounded-lg p-2 text-muted-foreground hover:bg-crimson/10 hover:text-crimson-deep" aria-label="Delete appointment">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
@@ -185,7 +185,7 @@ export function AdminInbox({ tab, onTabChange }: { tab: "messages" | "appointmen
                   onBlur={(e) => void saveNotes("appointments", a.id, e.target.value)}
                   rows={2}
                   placeholder="Internal notes (never shown publicly)…"
-                  className="mt-3 w-full rounded-lg border border-navy/12 px-3 py-2 text-sm focus:border-brand/50 focus:outline-none"
+                  className="mt-3 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-crimson/60 focus:outline-none"
                 />
               )}
             </li>

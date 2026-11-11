@@ -27,6 +27,26 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (error) return jsonError(error, "validation_error", 422);
   if (Object.keys(data).length === 0) return jsonError("Nothing to update");
 
+  // ── admin user safety rails ──
+  if (entity === "admins") {
+    const isSelf = id === admin.sub;
+    const demotesSelf = isSelf && ((typeof data.role === "string" && data.role !== "super_admin") || data.isActive === false);
+    if (demotesSelf) return jsonError("You cannot demote or deactivate your own account.", "forbidden", 403);
+
+    const target = await (db.adminUser as typeof db.adminUser).findUnique({ where: { id } });
+    if (!target) return jsonError("Item not found", "not_found", 404);
+
+    if (target.role === "super_admin") {
+      const losesSuper =
+        (typeof data.role === "string" && data.role !== "super_admin") ||
+        (data.role === undefined && data.isActive === false);
+      if (losesSuper) {
+        const superCount = await db.adminUser.count({ where: { role: "super_admin", isActive: true } });
+        if (superCount <= 1) return jsonError("The last super admin cannot be demoted or deactivated.", "forbidden", 403);
+      }
+    }
+  }
+
   try {
      
     const updated = await (db[def.model] as any).update({ where: { id }, data });
@@ -52,6 +72,14 @@ export async function DELETE(req: Request, { params }: Ctx) {
 
   if (entity === "admins" && id === admin.sub) {
     return jsonError("You cannot delete your own account.", "forbidden", 403);
+  }
+
+  if (entity === "admins") {
+    const target = await (db.adminUser as typeof db.adminUser).findUnique({ where: { id } });
+    if (target?.role === "super_admin") {
+      const superCount = await db.adminUser.count({ where: { role: "super_admin", isActive: true } });
+      if (superCount <= 1) return jsonError("The last super admin cannot be deleted.", "forbidden", 403);
+    }
   }
 
   try {

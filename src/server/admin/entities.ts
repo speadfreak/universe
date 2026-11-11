@@ -213,6 +213,17 @@ export function sanitizeEntityBody(
       data.passwordHash = hashPassword(password);
       data.email = String(data.email || "").toLowerCase().trim();
       if (!data.email) return { data: {}, error: "email is required" };
+    } else {
+      // update — optional password change (min 8 chars)
+      const password = body.password;
+      if (typeof password === "string" && password.length > 0) {
+        if (password.length < 8) return { data: {}, error: "password must be at least 8 characters" };
+        data.passwordHash = hashPassword(password);
+      }
+      if (typeof data.email === "string") {
+        data.email = data.email.toLowerCase().trim();
+        if (!data.email) return { data: {}, error: "email cannot be empty" };
+      }
     }
     if (typeof data.role === "string" && !["super_admin", "editor", "receptionist"].includes(data.role)) {
       return { data: {}, error: "invalid role" };

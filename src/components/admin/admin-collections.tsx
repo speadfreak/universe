@@ -188,13 +188,13 @@ export function AdminCollections({ entity }: { entity: string }) {
     if (res.ok) { toast.success("Deleted"); void load(); router.refresh(); } else toast.error(res.error.message);
   }
 
-  if (!config) return <p className="text-sm text-navy/50">Unknown collection.</p>;
+  if (!config) return <p className="text-sm text-muted-foreground">Unknown collection.</p>;
 
   return (
     <div>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <label className="flex min-h-10 w-full max-w-xs items-center gap-2 rounded-xl border border-navy/12 bg-white px-3.5">
-          <Search className="h-4 w-4 text-navy/40" />
+        <label className="flex min-h-10 w-full max-w-xs items-center gap-2 rounded-xl border border-border bg-card px-3.5">
+          <Search className="h-4 w-4 text-muted-foreground" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -204,43 +204,43 @@ export function AdminCollections({ entity }: { entity: string }) {
         </label>
         <button
           onClick={() => setEditing("new")}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-brand px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#2456d6]"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-crimson px-4 py-2.5 text-xs font-bold text-white transition hover:bg-crimson-deep"
         >
           <Plus className="h-4 w-4" /> New {config.title.toLowerCase()}
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-navy/30" /></div>
+        <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
       ) : rows.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-navy/15 py-16 text-center text-sm text-navy/40">
+        <div className="rounded-2xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           Nothing here yet — create the first {config.title.toLowerCase()}.
         </div>
       ) : (
         <ul className="space-y-2.5">
           {rows.map((row) => (
-            <li key={row.id} className="flex items-center gap-4 rounded-xl border border-navy/8 bg-white p-4">
+            <li key={row.id} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-navy">{String(row[config.primary] || "—")}</p>
-                <p className="truncate text-xs text-navy/50">
+                <p className="truncate text-sm font-bold text-foreground">{String(row[config.primary] || "—")}</p>
+                <p className="truncate text-xs text-muted-foreground">
                   {config.secondary ? String(row[config.secondary] || "") : ""}
                 </p>
               </div>
               {"status" in row && <StatusBadge status={String(row.status)} />}
               {"isPlaceholder" in row && row.isPlaceholder === true && (
-                <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider text-amber-600">placeholder</span>
+                <span className="rounded-full bg-stone/20 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider text-stone-deep">placeholder</span>
               )}
               {"featured" in row && row.featured === true && (
-                <span className="rounded-full bg-clinic-red/10 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider text-clinic-red">featured</span>
+                <span className="rounded-full bg-crimson/10 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider text-crimson-deep">featured</span>
               )}
               {"visible" in row && (
-                <span className={cn("rounded-full px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider", row.visible ? "bg-emerald-500/10 text-emerald-600" : "bg-navy/8 text-navy/40")}>
+                <span className={cn("rounded-full px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wider", row.visible ? " text-scrub" : "bg-secondary text-muted-foreground")}>
                   {row.visible ? "live" : "hidden"}
                 </span>
               )}
               <div className="flex shrink-0 gap-1.5">
-                <button onClick={() => setEditing(row)} className="rounded-lg p-2 text-navy/50 transition hover:bg-brand/10 hover:text-brand" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => void remove(row.id)} className="rounded-lg p-2 text-navy/50 transition hover:bg-clinic-red/10 hover:text-clinic-red" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+                <button onClick={() => setEditing(row)} className="rounded-lg p-2 text-muted-foreground transition hover:bg-crimson/10 hover:text-crimson" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => void remove(row.id)} className="rounded-lg p-2 text-muted-foreground transition hover:bg-crimson/10 hover:text-crimson-deep" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             </li>
           ))}
@@ -305,8 +305,8 @@ function CollectionEditor({ entity, row, onClose, onSaved }: { entity: string; r
         ))}
       </div>
       <div className="mt-6 flex justify-end gap-2.5">
-        <button onClick={onClose} className="rounded-xl border border-navy/12 px-4 py-2.5 text-sm font-semibold text-navy/70 hover:bg-navy/4">Cancel</button>
-        <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#2456d6] disabled:opacity-60">
+        <button onClick={onClose} className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-muted-foreground hover:bg-secondary">Cancel</button>
+        <button onClick={() => void save()} disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-crimson px-5 py-2.5 text-sm font-bold text-white transition hover:bg-crimson-deep disabled:opacity-60">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {row ? "Save changes" : "Create"}
         </button>
@@ -331,37 +331,37 @@ function CollectionField({
   onChange: (v: unknown) => void;
   onPickImage: () => void;
 }) {
-  const inputCls = "min-h-10 w-full rounded-xl border border-navy/12 px-3.5 text-sm focus:border-brand/50 focus:outline-none";
+  const inputCls = "min-h-10 w-full rounded-xl border border-border px-3.5 text-sm focus:border-crimson/60 focus:outline-none";
 
   switch (field.type) {
     case "bool":
       return (
-        <label className="flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-xl border border-navy/12 px-3.5">
-          <span className="text-sm font-medium text-navy/80">{field.label}</span>
-          <input type="checkbox" checked={Boolean(value)} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#2f6bff]" />
+        <label className="flex min-h-10 cursor-pointer items-center justify-between gap-3 rounded-xl border border-border px-3.5">
+          <span className="text-sm font-medium text-muted-foreground">{field.label}</span>
+          <input type="checkbox" checked={Boolean(value)} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-[#E3202B]" />
         </label>
       );
     case "select":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <select value={String(value || "")} onChange={(e) => onChange(e.target.value)} className={inputCls}>
             {field.options?.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
-          {field.help && <span className="mt-1 block text-[0.65rem] text-navy/40">{field.help}</span>}
+          {field.help && <span className="mt-1 block text-[0.65rem] text-muted-foreground">{field.help}</span>}
         </label>
       );
     case "number":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <input type="number" value={Number(value || 0)} onChange={(e) => onChange(parseInt(e.target.value, 10) || 0)} className={inputCls} />
         </label>
       );
     case "textarea":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <textarea rows={3} value={String(value || "")} onChange={(e) => onChange(e.target.value)} className={cn(inputCls, "py-2.5")} />
         </label>
       );
@@ -370,21 +370,21 @@ function CollectionField({
     case "image":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <div className="flex gap-2">
             <input value={String(value || "")} onChange={(e) => onChange(e.target.value)} placeholder="/api/media/…" className={inputCls} />
-            <button type="button" onClick={onPickImage} className="inline-flex items-center gap-1.5 rounded-xl border border-navy/12 px-3 text-xs font-bold text-navy/70 hover:border-brand/40 hover:text-brand">
-              <ImagePlus className="h3.5 w-3.5" /> Choose
+            <button type="button" onClick={onPickImage} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 text-xs font-bold text-muted-foreground hover:border-crimson/50 hover:text-crimson">
+              <ImagePlus className="h-3.5 w-3.5" /> Choose
             </button>
           </div>
-          {field.help && <span className="mt-1 block text-[0.65rem] text-navy/40">{field.help}</span>}
+          {field.help && <span className="mt-1 block text-[0.65rem] text-muted-foreground">{field.help}</span>}
         </label>
       );
     case "datetime": {
       const iso = value ? new Date(String(value)).toISOString().slice(0, 16) : "";
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <input
             type="datetime-local"
             value={iso}
@@ -397,7 +397,7 @@ function CollectionField({
     case "password":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <input
             type="password"
             value={String(value || "")}
@@ -406,49 +406,49 @@ function CollectionField({
             className={inputCls}
             autoComplete="new-password"
           />
-          {field.help && <span className="mt-1 block text-[0.65rem] text-navy/40">{field.help}</span>}
+          {field.help && <span className="mt-1 block text-[0.65rem] text-muted-foreground">{field.help}</span>}
         </label>
       );
     case "string-list":
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <input
             value={Array.isArray(value) ? (value as string[]).join(", ") : String(value || "")}
             onChange={(e) => onChange(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
             className={inputCls}
           />
-          {field.help && <span className="mt-1 block text-[0.65rem] text-navy/40">{field.help}</span>}
+          {field.help && <span className="mt-1 block text-[0.65rem] text-muted-foreground">{field.help}</span>}
         </label>
       );
     case "bilingual-list": {
       const rows = Array.isArray(value) ? (value as Array<{ en: string; am: string }>) : [];
       return (
         <div>
-          <p className="mb-2 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">
+          <p className="mb-2 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
             {field.label}
-            <button type="button" onClick={() => onChange([...rows, { en: "", am: "" }])} className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2 py-1 text-[0.65rem] font-bold text-brand">
+            <button type="button" onClick={() => onChange([...rows, { en: "", am: "" }])} className="inline-flex items-center gap-1 rounded-md bg-crimson/10 px-2 py-1 text-[0.65rem] font-bold text-crimson">
               <Plus className="h-3 w-3" /> Add
             </button>
           </p>
           <div className="space-y-2">
             {rows.map((r, i) => (
-              <div key={i} className="flex items-center gap-2 rounded-xl border border-navy/10 p-2.5">
+              <div key={i} className="flex items-center gap-2 rounded-xl border border-border p-2.5">
                 <input
                   value={r.en || ""}
                   onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], en: e.target.value }; onChange(n); }}
                   placeholder="English"
-                  className="min-h-9 flex-1 rounded-lg border border-navy/12 px-2.5 text-sm focus:border-brand/50 focus:outline-none"
+                  className="min-h-9 flex-1 rounded-lg border border-border px-2.5 text-sm focus:border-crimson/60 focus:outline-none"
                 />
                 <input
                   value={r.am || ""}
                   onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], am: e.target.value }; onChange(n); }}
                   placeholder="አማርኛ"
-                  className="min-h-9 flex-1 rounded-lg border border-navy/12 px-2.5 text-sm focus:border-brand/50 focus:outline-none"
+                  className="min-h-9 flex-1 rounded-lg border border-border px-2.5 text-sm focus:border-crimson/60 focus:outline-none"
                 />
                 <div className="flex flex-col">
-                  <button type="button" onClick={() => { if (i === 0) return; const n = [...rows]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; onChange(n); }} className="rounded p-0.5 text-navy/40 hover:text-navy" aria-label="Move up"><ChevronUp className="h-3 w-3" /></button>
-                  <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} className="rounded p-0.5 text-navy/40 hover:text-clinic-red" aria-label="Remove"><Trash2 className="h-3 w-3" /></button>
+                  <button type="button" onClick={() => { if (i === 0) return; const n = [...rows]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; onChange(n); }} className="rounded p-0.5 text-muted-foreground hover:text-foreground" aria-label="Move up"><ChevronUp className="h-3 w-3" /></button>
+                  <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} className="rounded p-0.5 text-muted-foreground hover:text-crimson-deep" aria-label="Remove"><Trash2 className="h-3 w-3" /></button>
                 </div>
               </div>
             ))}
@@ -460,26 +460,26 @@ function CollectionField({
       const rows = Array.isArray(value) ? (value as Array<{ q: { en: string; am: string }; a: { en: string; am: string } }>) : [];
       return (
         <div>
-          <p className="mb-2 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">
+          <p className="mb-2 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
             {field.label}
-            <button type="button" onClick={() => onChange([...rows, { q: { en: "", am: "" }, a: { en: "", am: "" } }])} className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2 py-1 text-[0.65rem] font-bold text-brand">
+            <button type="button" onClick={() => onChange([...rows, { q: { en: "", am: "" }, a: { en: "", am: "" } }])} className="inline-flex items-center gap-1 rounded-md bg-crimson/10 px-2 py-1 text-[0.65rem] font-bold text-crimson">
               <Plus className="h-3 w-3" /> Add
             </button>
           </p>
           <div className="space-y-3">
             {rows.map((r, i) => (
-              <div key={i} className="rounded-xl border border-navy/10 p-3">
+              <div key={i} className="rounded-xl border border-border p-3">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[0.62rem] font-bold uppercase tracking-wider text-navy/40">FAQ {i + 1}</span>
-                  <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} className="rounded p-1 text-navy/40 hover:text-clinic-red" aria-label="Remove">
-                    <Trash2 className="h3.5 w-3.5" />
+                  <span className="text-[0.62rem] font-bold uppercase tracking-wider text-muted-foreground">FAQ {i + 1}</span>
+                  <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} className="rounded p-1 text-muted-foreground hover:text-crimson-deep" aria-label="Remove">
+                    <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  <input value={r.q?.en || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], q: { ...n[i].q, en: e.target.value } }; onChange(n); }} placeholder="Question (EN)" className="min-h-9 w-full rounded-lg border border-navy/12 px-2.5 text-sm focus:border-brand/50 focus:outline-none" />
-                  <input value={r.q?.am || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], q: { ...n[i].q, am: e.target.value } }; onChange(n); }} placeholder="ጥያቄ (AM)" className="min-h-9 w-full rounded-lg border border-navy/12 px-2.5 text-sm focus:border-brand/50 focus:outline-none" />
-                  <textarea rows={2} value={r.a?.en || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], a: { ...n[i].a, en: e.target.value } }; onChange(n); }} placeholder="Answer (EN)" className="w-full rounded-lg border border-navy/12 px-2.5 py-2 text-sm focus:border-brand/50 focus:outline-none" />
-                  <textarea rows={2} value={r.a?.am || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], a: { ...n[i].a, am: e.target.value } }; onChange(n); }} placeholder="መልስ (AM)" className="w-full rounded-lg border border-navy/12 px-2.5 py-2 text-sm focus:border-brand/50 focus:outline-none" />
+                  <input value={r.q?.en || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], q: { ...n[i].q, en: e.target.value } }; onChange(n); }} placeholder="Question (EN)" className="min-h-9 w-full rounded-lg border border-border px-2.5 text-sm focus:border-crimson/60 focus:outline-none" />
+                  <input value={r.q?.am || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], q: { ...n[i].q, am: e.target.value } }; onChange(n); }} placeholder="ጥያቄ (AM)" className="min-h-9 w-full rounded-lg border border-border px-2.5 text-sm focus:border-crimson/60 focus:outline-none" />
+                  <textarea rows={2} value={r.a?.en || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], a: { ...n[i].a, en: e.target.value } }; onChange(n); }} placeholder="Answer (EN)" className="w-full rounded-lg border border-border px-2.5 py-2 text-sm focus:border-crimson/60 focus:outline-none" />
+                  <textarea rows={2} value={r.a?.am || ""} onChange={(e) => { const n = [...rows]; n[i] = { ...n[i], a: { ...n[i].a, am: e.target.value } }; onChange(n); }} placeholder="መልስ (AM)" className="w-full rounded-lg border border-border px-2.5 py-2 text-sm focus:border-crimson/60 focus:outline-none" />
                 </div>
               </div>
             ))}
@@ -490,9 +490,9 @@ function CollectionField({
     default:
       return (
         <label className="block">
-          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">{field.label}</span>
+          <span className="mb-1.5 block text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">{field.label}</span>
           <input value={String(value || "")} onChange={(e) => onChange(e.target.value)} className={inputCls} />
-          {field.help && <span className="mt-1 block text-[0.65rem] text-navy/40">{field.help}</span>}
+          {field.help && <span className="mt-1 block text-[0.65rem] text-muted-foreground">{field.help}</span>}
         </label>
       );
   }
@@ -519,13 +519,13 @@ function MarkdownField({ label, value, onChange }: { label: string; value: strin
 
   return (
     <div>
-      <p className="mb-1.5 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-navy/50">
+      <p className="mb-1.5 flex items-center justify-between text-[0.68rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
         {label}
-        <button type="button" onClick={() => setPicker(true)} className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2 py-1 text-[0.65rem] font-bold text-brand">
+        <button type="button" onClick={() => setPicker(true)} className="inline-flex items-center gap-1 rounded-md bg-crimson/10 px-2 py-1 text-[0.65rem] font-bold text-crimson">
           <ImagePlus className="h-3 w-3" /> Insert image
         </button>
       </p>
-      <textarea ref={ref} rows={8} value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-navy/12 px-3.5 py-2.5 font-mono text-[0.82rem] leading-relaxed focus:border-brand/50 focus:outline-none" />
+      <textarea ref={ref} rows={8} value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-xl border border-border px-3.5 py-2.5 font-mono text-[0.82rem] leading-relaxed focus:border-crimson/60 focus:outline-none" />
       {picker && <MediaPickerModal open onClose={() => setPicker(false)} onPick={insert} />}
     </div>
   );

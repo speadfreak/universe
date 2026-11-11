@@ -1,28 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Universe Medical Center · Porcelain & Crimson icon -->
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0D1F3C"/>
-      <stop offset="1" stop-color="#05070D"/>
+    <linearGradient id="oxblood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1C1A1D"/>
+      <stop offset="1" stop-color="#4A0F18"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.4" r="0.65">
-      <stop offset="0" stop-color="#2F6BFF" stop-opacity="0.38"/>
-      <stop offset="1" stop-color="#2F6BFF" stop-opacity="0"/>
-    </radialGradient>
   </defs>
-  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
-  <rect width="512" height="512" rx="116" fill="url(#glow)"/>
-  <!-- stethoscope ring with gap -->
-  <circle cx="256" cy="248" r="150" fill="none" stroke="#FFFFFF" stroke-width="17" stroke-linecap="round" stroke-dasharray="780 90" transform="rotate(118 256 248)"/>
-  <!-- red U -->
-  <path d="M170 158 V252 a48 48 0 0 0 96 0 V158" fill="none" stroke="#E31E24" stroke-width="46" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="112" fill="url(#oxblood)"/>
+  <!-- stethoscope circle -->
+  <circle cx="256" cy="252" r="164" fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" stroke-dasharray="880 160" transform="rotate(118 256 252)"/>
+  <!-- crimson U -->
+  <path d="M186 176 v96 a70 70 0 0 0 140 0 v-96" fill="none" stroke="#E3202B" stroke-width="46" stroke-linecap="round"/>
   <!-- white M -->
-  <path d="M268 322 V162 l56 92 56-92 V322" fill="none" stroke="#FFFFFF" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- medical cross node -->
-  <circle cx="256" cy="146" r="21" fill="#E31E24"/>
-  <path d="M256 137 v18 M247 146 h18" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-  <!-- heartbeat dot on ring gap -->
-  <circle cx="374" cy="352" r="25" fill="#E31E24"/>
-  <circle cx="374" cy="352" r="41" fill="none" stroke="#E31E24" stroke-opacity="0.45" stroke-width="7"/>
+  <path d="M272 344 V186 l60 92 60-92 v158" fill="none" stroke="#FFFFFF" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- cross node -->
+  <circle cx="256" cy="112" r="26" fill="#E3202B"/>
+  <path d="M256 99 v26 M243 112 h26" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+  <!-- heartbeat node -->
+  <circle cx="384" cy="330" r="18" fill="#E3202B"/>
   <!-- ecg tick -->
-  <path d="M120 396 h48 l12-20 16 40 14-32 10 12 h60" fill="none" stroke="#38D6FF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <path d="M96 402 h56 l10-16 14 28 12-40 10 18 h40" fill="none" stroke="#E3202B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
