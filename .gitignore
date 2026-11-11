@@ -57,3 +57,8 @@ db/*.db
 db/*.sqlite
 
 # uploads are stored in Postgres — nothing else
+
+# sandbox runtime artifacts
+.zscripts/
+tool-results/
+agent-ctx/

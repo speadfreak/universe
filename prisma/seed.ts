@@ -7,21 +7,29 @@
  * Run: bun prisma/seed.ts
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { scryptSync, randomBytes } from "crypto";
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url:
-        process.env.DATABASE_URL?.startsWith("postgres") || process.env.DATABASE_URL?.startsWith("postgres")
-          ? process.env.DATABASE_URL
-          : process.env.POSTGRES_URL || process.env.DATABASE_URL,
-    },
-  },
-});
+/** Prefer a postgres:// URL; fall back to the .env file when the shell exports a non-postgres placeholder. */
+function resolveUrl(): string {
+  const candidates = [process.env.DATABASE_URL, process.env.POSTGRES_URL];
+  for (const url of candidates) {
+    if (url && (url.startsWith("postgres://") || url.startsWith("postgresql://"))) return url;
+  }
+  try {
+    const envFile = readFileSync(path.join(process.cwd(), ".env"), "utf8");
+    const m = envFile.match(/^DATABASE_URL="?((?:postgres(?:ql)?:\/\/)[^"\n]+)"?/m);
+    if (m) return m[1];
+  } catch {}
+  return "";
+}
+
+const url = resolveUrl();
+const prisma = url
+  ? new PrismaClient({ datasources: { db: { url } } })
+  : new PrismaClient();
 
 function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -34,9 +42,9 @@ function slugify(text: string): string {
 }
 
 // content defaults are plain TS — import via require to reuse the module
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let CONTENT_DEFAULTS: Record<string, { en: any; am: any }>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let CONTENT_SCHEMA: any[];
 async function loadContentModules() {
   // bun can import TS directly
@@ -85,7 +93,7 @@ async function seedSettings() {
     amharicReviewFlag: true,
   };
   for (const [key, value] of Object.entries(defaults)) {
-    await prisma.setting.upsert({ where: { key }, create: { key, value }, update: {} });
+    await prisma.setting.upsert({ where: { key }, create: { key, value: value as Prisma.InputJsonValue }, update: {} });
   }
   await prisma.setting.upsert({
     where: { key: "socials" },

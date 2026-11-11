@@ -94,7 +94,7 @@ export function AdminMedia() {
             <div key={m.id} className="group overflow-hidden rounded-xl border border-navy/8 bg-white">
               <div className="relative aspect-square bg-navy/4">
                 {m.type.startsWith("image/") ? (
-                  // eslint-disable-next-line @next/next/no-img-element
+                   
                   <img src={m.url} alt={m.alt || m.name} loading="lazy" className="h-full w-full object-cover" />
                 ) : m.type.startsWith("video/") ? (
                   <video src={m.url} className="h-full w-full object-cover" muted preload="metadata" />
@@ -233,7 +233,7 @@ export function MediaPickerModal({ open, onClose, onPick }: { open: boolean; onC
               className="group relative aspect-square overflow-hidden rounded-xl border border-navy/10 bg-navy/4 transition hover:border-brand/50"
             >
               {m.type.startsWith("image/") ? (
-                // eslint-disable-next-line @next/next/no-img-element
+                 
                 <img src={m.url} alt={m.alt || m.name} loading="lazy" className="h-full w-full object-cover" />
               ) : m.type.startsWith("video/") ? (
                 <div className="flex h-full flex-col items-center justify-center text-navy/40"><Film className="h-7 w-7" /><span className="mt-1 text-[0.6rem]">{m.name}</span></div>

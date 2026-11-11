@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/auth";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient, Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import type { SessionPayload } from "@/lib/auth";
 
@@ -21,7 +21,7 @@ export async function audit(
         action,
         entity,
         entityId,
-        meta: meta ?? undefined,
+        meta: (meta as Prisma.InputJsonValue | undefined) ?? undefined,
       },
     });
   } catch (err) {

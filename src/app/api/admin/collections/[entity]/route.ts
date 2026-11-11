@@ -60,7 +60,7 @@ export async function POST(req: Request, { params }: Ctx) {
   if (error) return jsonError(error, "validation_error", 422);
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const created = await (db[def.model] as any).create({ data });
     await audit(admin, "created", entity, (created as { id: string }).id);
     return NextResponse.json({ ok: true, data: created }, { status: 201 });

@@ -193,6 +193,20 @@ model Branch {
   visible     Boolean  @default(true)
 }
 
+// ───────────────────────── Patients ─────────────────────────
+// Lightweight local patient directory (keyed by phone — the clinic's
+// natural patient key). External HMS ids land here via syncPatient.
+
+model Patient {
+  id         String   @id @default(uuid())
+  phone      String   @unique
+  name       String
+  email      String   @default("")
+  externalId String   @default("") // HMS-side id once connected
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 // ───────────────────────── Inbox ─────────────────────────
 
 model ContactMessage {

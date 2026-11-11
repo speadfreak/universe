@@ -132,7 +132,7 @@ export function SiteProvider({ data, children }: { data: SiteData; children: Rea
     window.scrollTo({ top: 0 });
     // refresh GSAP after new page mounts
     const id = window.setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (window as any).ScrollTrigger?.refresh();
     }, 350);
     return () => window.clearTimeout(id);

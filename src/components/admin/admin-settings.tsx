@@ -33,8 +33,9 @@ export function AdminSettings() {
     return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-navy/30" /></div>;
   }
 
-  const set = (k: keyof Settings, v: unknown) => setS((prev) => ({ ...(prev as Settings), [k]: v }));
-  const setSocial = (k: keyof Settings["socials"], v: string) => setS((prev) => ({ ...(prev as Settings), socials: { ...prev.socials, [k]: v } }));
+  const set = (k: keyof Settings, v: unknown) => setS((prev) => (prev ? { ...prev, [k]: v } : prev));
+  const setSocial = (k: keyof Settings["socials"], v: string) =>
+    setS((prev) => (prev ? { ...prev, socials: { ...prev.socials, [k]: v } } : prev));
 
   async function uploadHeroVideo(file: File) {
     setUploadingVideo(true);

@@ -9,7 +9,7 @@ import { PackageCard } from "@/components/site/cards";
 import { str } from "@/lib/content-schema";
 
 export default function PackagesPage() {
-  const { section, L, navigate } = useSite();
+  const { data, section, L, navigate } = useSite();
   const hero = section("packages", "hero");
   const corporate = section("packages", "corporate");
 

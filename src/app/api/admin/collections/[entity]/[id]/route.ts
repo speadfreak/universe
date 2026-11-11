@@ -28,7 +28,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (Object.keys(data).length === 0) return jsonError("Nothing to update");
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const updated = await (db[def.model] as any).update({ where: { id }, data });
     await audit(admin, "updated", entity, id, { fields: Object.keys(data) });
     return NextResponse.json({ ok: true, data: updated });

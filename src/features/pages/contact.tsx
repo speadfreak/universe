@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { CalendarCheck, Mail, MapPin, MessageCircle, Navigation, Phone, Send, Clock } from "lucide-react";
 import { useSite } from "@/components/site/site-context";
 import { ButtonRed, GlassCard, PageHero, SectionHeading } from "@/components/site/bits";
@@ -29,7 +30,10 @@ export default function ContactPage() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ContactInput>({ resolver: zodResolver(contactSchema), defaultValues: { department: "", email: "" } });
+  } = useForm<z.input<typeof contactSchema>, unknown, ContactInput>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: { department: "", email: "" },
+  });
 
   async function onSubmit(values: ContactInput) {
     try {

@@ -47,7 +47,10 @@ export const loginSchema = z.object({
 
 /** ── versioned API (HMS) ──────────────────────────────────────── */
 
-export const apiAppointmentSchema = appointmentSchema.omit({ website: true });
+// external callers may omit email entirely (phone-first booking)
+export const apiAppointmentSchema = appointmentSchema
+  .omit({ website: true })
+  .extend({ email: optionalEmail.optional() });
 
 export function zodErrorMessage(err: z.ZodError): string {
   const first = err.issues[0];

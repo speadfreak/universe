@@ -14,8 +14,12 @@ export type SectionValue = string | Array<Record<string, string>>;
 export type SectionData = Record<string, SectionValue>;
 export type LocaleData = { en: SectionData; am: SectionData };
 
-const F = (name: string, label: string, type: FieldType = "text", list?: FieldDef[]): FieldDef =>
-  list ? { name, label, type, list } : { name, label, type };
+const F = (name: string, label?: string, type: FieldType = "text", list?: FieldDef[]): FieldDef => ({
+  name,
+  label: label ?? name,
+  type,
+  ...(list ? { list } : {}),
+});
 const L = (name: string, label: string, list: FieldDef[]): FieldDef => ({ name, label, type: "text", list });
 
 export const CONTENT_SCHEMA: PageDef[] = [

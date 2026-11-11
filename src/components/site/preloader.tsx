@@ -16,6 +16,18 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
   const [reduced, setReduced] = useState(false);
   const timers = useRef<number[]>([]);
 
+  function clearTimers() {
+    timers.current.forEach((id) => window.clearTimeout(id));
+    timers.current = [];
+  }
+
+  function finish() {
+    window.sessionStorage.setItem("umc-preloaded", "1");
+    document.documentElement.style.overflow = "";
+    setPhase("exit");
+    window.setTimeout(() => setPhase("off"), 820);
+  }
+
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setReduced(reducedMotion);
@@ -47,20 +59,8 @@ export function Preloader({ enabled, logoUrl }: { enabled: boolean; logoUrl: str
       controls.stop();
       window.clearTimeout(safety);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [enabled]);
-
-  function clearTimers() {
-    timers.current.forEach((id) => window.clearTimeout(id));
-    timers.current = [];
-  }
-
-  function finish() {
-    window.sessionStorage.setItem("umc-preloaded", "1");
-    document.documentElement.style.overflow = "";
-    setPhase("exit");
-    window.setTimeout(() => setPhase("off"), 820);
-  }
 
   const skip = () => {
     if (phase !== "show") return;

@@ -16,7 +16,7 @@ async function loadSettings(): Promise<SiteSettings> {
     if (key === "socials") {
       merged.socials = { ...merged.socials, ...(row.value as Partial<SiteSettings["socials"]>) };
     } else if (key in merged) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (merged as any)[key] = row.value as any;
     }
   }
@@ -46,9 +46,9 @@ export async function getSiteData(): Promise<SiteData> {
   for (const row of sections) {
     const value = row.data as { en?: object; am?: object };
     content[`${row.page}.${row.sectionKey}`] = {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       en: (value.en ?? {}) as any,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       am: (value.am ?? {}) as any,
     };
     sectionsIndex[`${row.page}.${row.sectionKey}`] = {

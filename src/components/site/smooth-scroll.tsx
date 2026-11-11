@@ -19,7 +19,7 @@ export function SmoothScroll() {
       ]);
       if (killed) return;
       gsap.registerPlugin(ScrollTrigger);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       (window as unknown as { ScrollTrigger: unknown }).ScrollTrigger = ScrollTrigger;
 
       const instance = new Lenis({
@@ -29,7 +29,7 @@ export function SmoothScroll() {
         touchMultiplier: 1.4,
       });
       lenis = instance as unknown as typeof lenis;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       lenisRef.current = instance as any;
       instance.on("scroll", ScrollTrigger.update);
       const loop = (time: number) => {

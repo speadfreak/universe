@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { zodErrorMessage, apiAppointmentSchema } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
-import { getHmsAdapter } from "@/server/services/local-db-adapter";
+import { getHmsAdapter, AdapterError } from "@/server/services/local-db-adapter";
 import { getAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -55,6 +55,14 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (err) {
+    if (err instanceof AdapterError) {
+      const status = err.code === "slot_taken" ? 409 : 422;
+      const code = err.code === "slot_taken" ? "slot_unavailable" : err.code;
+      return NextResponse.json(
+        { ok: false, error: { code, message: err.message } },
+        { status }
+      );
+    }
     console.error("[v1/appointments] create failed:", err);
     return NextResponse.json(
       { ok: false, error: { code: "server_error", message: "Could not create the appointment." } },
