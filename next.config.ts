@@ -1,10 +1,14 @@
 import type { NextConfig } from "next";
 
+/**
+ * BUILD_STANDALONE=1 produces a self-hostable bundle (.next/standalone).
+ * Vercel and other platforms that run `next start` themselves must NOT
+ * set this — they use their own output tracing.
+ */
 const nextConfig: NextConfig = {
-  output: "standalone",
-  /* config options here */
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   reactStrictMode: false,
 };

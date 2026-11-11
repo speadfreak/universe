@@ -70,10 +70,21 @@ Additional staff accounts (editors, receptionists) can be created from the admin
 
 ## Deployment (Vercel + Neon)
 
-1. **Import the repo** — import `github.com/speadfreak/universe` into Vercel as a new project.
-2. **Provision the database** — create a Postgres database on [Neon](https://neon.tech) and copy the pooled connection string.
-3. **Add environment variables** — in Vercel → Project → Settings → Environment Variables, add every variable from the table above. Set `NEXT_PUBLIC_SITE_URL` to your production domain.
-4. **Deploy** — deploy the project, then run `bunx prisma db push` and `bun prisma/seed.ts` once against the production database (locally, with `DATABASE_URL` pointed at Neon) to create the schema and the first admin.
+1. **Import the repo** — import `github.com/speadfreak/universe` into Vercel as a new project. Vercel detects Bun (via `bun.lock`) and runs `prisma generate && next build` automatically.
+2. **Provision the database** — create a Postgres database on [Neon](https://neon.tech) and copy the **pooled** connection string (the one containing `-pooler`). Remove `channel_binding=require` from the query string — it is a libpq-only parameter that Prisma does not implement — and keep `?sslmode=require`:
+
+   ```
+   postgresql://USER:PASSWORD@ep-xxxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require
+   ```
+3. **Add environment variables** — in Vercel → Project → Settings → Environment Variables, add every variable from the table above. `SESSION_SECRET` is **required in production** (generate with `openssl rand -hex 32`) and `NEXT_PUBLIC_SITE_URL` must be your production domain.
+4. **Create schema + first admin** — once, from your machine with `DATABASE_URL` pointed at Neon:
+
+   ```bash
+   bunx prisma db push && bun prisma/seed.ts
+   ```
+
+   Then deploy. Future admin sign-in: **`/#/admin`**.
+
 
 ## API overview
 
