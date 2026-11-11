@@ -67,11 +67,11 @@ function BrandedError() {
   const { section } = useSite();
   const err = section("error", "serverError");
   return (
-    <section className="bg-ink-vignette grain on-dark flex min-h-screen items-center justify-center pt-20">
+    <section className="flex min-h-screen items-center justify-center bg-mesh-dark grain pt-20">
       <div className="container-x max-w-md text-center">
-        <p className="num-serif text-7xl text-crimson" aria-hidden="true">!</p>
-        <h1 className="h2 mt-4 text-porcelain">{err.title as string}</h1>
-        <p className="mt-3 text-sm text-porcelain/65">{err.text as string}</p>
+        <p className="font-display text-7xl font-bold text-gradient" aria-hidden="true">!</p>
+        <h1 className="h2 mt-4 text-ice">{err.title as string}</h1>
+        <p className="mt-3 text-sm text-ice-dim">{err.text as string}</p>
         <div className="mt-7 flex justify-center">
           <ButtonRed onClick={() => (window.location.hash = "#/")}>{err.cta as string}</ButtonRed>
         </div>
@@ -160,8 +160,8 @@ export function SiteApp({ data }: { data: SiteData }) {
         <ErrorBoundary fallbackRender={() => <BrandedError />}>
           <Suspense
             fallback={
-              <div className="flex min-h-screen items-center justify-center bg-porcelain">
-                <div className="h-10 w-10 animate-spin rounded-full border-2 border-crimson/25 border-t-crimson" aria-label="Loading admin" />
+              <div className="flex min-h-screen items-center justify-center bg-ink">
+                <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan/30 border-t-cyan" aria-label="Loading admin" />
               </div>
             }
           >

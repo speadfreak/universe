@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { CalendarCheck, ChevronRight, MapPin, Phone, Quote } from "lucide-react";
 import { useSite } from "@/components/site/site-context";
-import { ButtonRed, JsonLd, PageHero, SectionHeading } from "@/components/site/bits";
-import { Reveal, StaggerGroup, StaggerItem } from "@/components/site/motion";
-import { StatBand, StatChip } from "@/components/site/cards";
+import { ButtonRed, GlassCard, JsonLd, PageHero, SectionHeading } from "@/components/site/bits";
+import { Reveal, SplitWords, StaggerGroup, StaggerItem, Counter } from "@/components/site/motion";
+import { StatChip } from "@/components/site/cards";
 import { list, str } from "@/lib/content-schema";
 import type { SectionData } from "@/lib/content-schema";
 
@@ -41,20 +41,28 @@ export default function AboutPage() {
       <JsonLd data={orgSchema} />
       <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("About", "ስለ እኛ")} />
 
-      {/* 01 — story: light porcelain, arch-masked image */}
-      <section className="bg-porcelain-flat relative section-pad">
-        <div className="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+      {/* story */}
+      <section className="bg-mesh-dark grain relative section-pad">
+        <div className="container-x grid items-center gap-14 lg:grid-cols-2">
           <div>
-            <SectionHeading index="01" eyebrow={str(story, "eyebrow")} title={str(story, "title")} emphasizeLast />
+            <Reveal>
+              <p className="eyebrow mb-3 inline-flex items-center gap-2 text-cyan">
+                <span className="inline-block h-px w-8 bg-cyan/50" />
+                {str(story, "eyebrow")}
+              </p>
+            </Reveal>
+            <h2 className="h1 text-ice">
+              <SplitWords text={str(story, "title")} />
+            </h2>
             <Reveal delay={0.1}>
-              <p className="lead mt-6 max-w-xl">{str(story, "text")}</p>
+              <p className="mt-6 leading-relaxed text-ice-dim">{str(story, "text")}</p>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-4 max-w-xl leading-relaxed text-stone-deep">{str(story, "text2")}</p>
+              <p className="mt-4 leading-relaxed text-ice-dim">{str(story, "text2")}</p>
             </Reveal>
           </div>
           <Reveal delay={0.1} className="relative">
-            <div className="arch relative aspect-[4/4.4] overflow-hidden bg-bone shadow-warm sm:aspect-[4/3.4]">
+            <div className="border-glow relative aspect-[4/3] overflow-hidden rounded-3xl">
               <Image
                 src={str(story, "image") || "/img/about-story.jpg"}
                 alt={L("Our clinic team", "የክሊኒካችን ቡድን")}
@@ -62,10 +70,11 @@ export default function AboutPage() {
                 sizes="(max-width:1024px) 100vw, 46vw"
                 className="object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" aria-hidden="true" />
             </div>
-            <div className="absolute -bottom-6 left-6 flex max-w-[13rem] items-center gap-3 rounded-[10px] bg-ink px-5 py-4 shadow-warm-sm">
-              <Quote className="h-5 w-5 shrink-0 text-crimson" aria-hidden="true" />
-              <p className="text-xs font-semibold leading-snug text-porcelain">
+            <div className="glass absolute -bottom-7 left-7 flex items-center gap-3 rounded-2xl px-5 py-4">
+              <Quote className="h-6 w-6 text-cyan" aria-hidden="true" />
+              <p className="max-w-[13rem] text-xs font-semibold leading-snug text-ice">
                 {L("“We care about you.”", "“እንከታከምልዎታለን።”")}
               </p>
             </div>
@@ -73,22 +82,22 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 02 — timeline: hairline spine, serif numerals, no boxes */}
-      <section className="bg-porcelain-deep relative section-pad">
+      {/* timeline */}
+      <section className="relative section-pad bg-navy/60">
         <div className="container-x">
-          <SectionHeading index="02" eyebrow={str(timeline, "eyebrow")} title={str(timeline, "title")} emphasizeLast />
+          <SectionHeading eyebrow={str(timeline, "eyebrow")} title={str(timeline, "title")} />
           <div className="relative mx-auto mt-16 max-w-3xl">
-            <div className="absolute bottom-4 left-5 top-4 w-px bg-ink/12 sm:left-1/2" aria-hidden="true" />
+            <div className="absolute bottom-4 left-5 top-4 w-px bg-gradient-to-b from-cyan/50 via-brand/40 to-transparent sm:left-1/2" aria-hidden="true" />
             <ol className="space-y-10">
               {list(timeline, "items").map((item, i) => (
                 <Reveal as="li" key={i} delay={i * 0.08} className={`relative flex gap-6 sm:w-1/2 ${i % 2 === 0 ? "sm:pr-12" : "sm:ml-auto sm:flex-row-reverse sm:pl-12 sm:text-right"}`}>
-                  <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-porcelain-deep font-display text-[0.7rem] font-bold text-crimson">
+                  <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cyan/30 bg-ink font-display text-[0.7rem] font-bold text-cyan glow-blue">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <div className="flex-1">
-                    <p className="eyebrow text-stone-deep">{str(item as SectionData, "year")}</p>
-                    <h3 className="h3 mt-1.5 text-ink">{str(item as SectionData, "title")}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-stone-deep">{str(item as SectionData, "text")}</p>
+                  <div className="glass flex-1 rounded-2xl p-5">
+                    <p className="font-display text-xs font-bold uppercase tracking-[0.2em] text-clinic-red">{str(item as SectionData, "year")}</p>
+                    <h3 className="mt-1.5 font-display text-[1.05rem] font-bold text-ice">{str(item as SectionData, "title")}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-ice-dim">{str(item as SectionData, "text")}</p>
                   </div>
                 </Reveal>
               ))}
@@ -97,11 +106,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 03 — mission: bone surface, stat chips divided by whitespace */}
-      <section className="bg-bone-flat relative section-pad">
-        <div className="container-x grid items-center gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+      {/* mission (bright) */}
+      <section className="bg-mesh-ice relative section-pad text-navy">
+        <div className="container-x grid items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <SectionHeading index="03" eyebrow={str(mission, "eyebrow")} title={str(mission, "title")} subtitle={str(mission, "text")} emphasizeLast />
+            <Reveal>
+              <p className="eyebrow mb-3 inline-flex items-center gap-2 text-brand">
+                <span className="inline-block h-px w-8 bg-brand/50" />
+                {str(mission, "eyebrow")}
+              </p>
+            </Reveal>
+            <h2 className="h1 text-navy">{str(mission, "title")}</h2>
+            <Reveal delay={0.12}>
+              <p className="mt-6 max-w-2xl leading-relaxed text-navy/70">{str(mission, "text")}</p>
+            </Reveal>
           </div>
           <StaggerGroup className="grid grid-cols-2 gap-4">
             {[
@@ -111,89 +129,81 @@ export default function AboutPage() {
               { value: "24/7", label: L("Patient support", "የታካሚ ድጋፍ") },
             ].map((s, i) => (
               <StaggerItem key={i}>
-                <StatChip value={s.value} label={s.label} />
+                <StatChip value={s.value} label={s.label} dark />
               </StaggerItem>
             ))}
           </StaggerGroup>
         </div>
       </section>
 
-      {/* 04 — values: calm scrub band, hairline rows */}
-      <section className="bg-scrub on-dark relative section-pad">
+      {/* values */}
+      <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x">
-          <SectionHeading dark index="04" eyebrow={str(values, "eyebrow")} title={str(values, "title")} emphasizeLast />
-          <StaggerGroup className="mt-12">
+          <SectionHeading eyebrow={str(values, "eyebrow")} title={str(values, "title")} />
+          <StaggerGroup className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {list(values, "items").map((item, i) => (
-              <StaggerItem key={i} className="border-t border-porcelain/12 last:border-b">
-                <div className="grid gap-2 py-6 md:grid-cols-[4.5rem_1fr_1.6fr] md:items-baseline md:gap-10">
-                  <span className="num-serif text-sm text-porcelain/40" aria-hidden="true">
+              <StaggerItem key={i} className="h-full">
+                <GlassCard className="h-full">
+                  <span className="font-display text-4xl font-bold text-gradient" aria-hidden="true">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="h3 text-porcelain">{str(item as SectionData, "title")}</h3>
-                  <p className="text-sm leading-relaxed text-porcelain/65">{str(item as SectionData, "text")}</p>
-                </div>
+                  <h3 className="mt-3 font-display text-[1.02rem] font-bold text-ice">{str(item as SectionData, "title")}</h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ice-dim">{str(item as SectionData, "text")}</p>
+                </GlassCard>
               </StaggerItem>
             ))}
           </StaggerGroup>
-          <Reveal className="mt-10">
-            <p className="text-xs italic text-porcelain/45">
+          <Reveal className="mt-6 text-center">
+            <p className="text-xs italic text-ice-dim/70">
               {L("Amharic wording shown on the Amharic site is flagged for native-speaker review in the admin panel.", "በአማርኛ ገጹ ላይ ያለው ጽሑፍ ለተሟላ ክለሳ ተመልክቷል።")}
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* 05 — branches: selectable hairline rows + paper detail plate */}
-      <section className="bg-bone-flat relative section-pad">
+      {/* branches interactive */}
+      <section className="relative section-pad bg-navy/60">
         <div className="container-x">
-          <SectionHeading index="05" eyebrow={str(branchesHead, "eyebrow")} title={str(branchesHead, "title")} subtitle={str(branchesHead, "subtitle")} emphasizeLast />
-          <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-14">
-            <div>
+          <SectionHeading eyebrow={str(branchesHead, "eyebrow")} title={str(branchesHead, "title")} subtitle={str(branchesHead, "subtitle")} />
+          <div className="mt-14 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+            <div className="space-y-3">
               {data.branches.map((b, i) => (
                 <button
                   key={b.id}
                   onClick={() => setActiveBranch(i)}
-                  className="group flex w-full items-center justify-between gap-4 border-t border-ink/12 py-5 text-left transition-colors duration-300 last:border-b"
+                  className={`w-full rounded-2xl border p-5 text-left transition-all duration-300 ${
+                    activeBranch === i
+                      ? "border-cyan/45 bg-brand/12 shadow-[0_0_34px_-10px_rgba(227,32,43,0.4)]"
+                      : "border-white/8 bg-white/3 hover:border-cyan/25"
+                  }`}
                   aria-pressed={activeBranch === i}
                 >
-                  <span className="flex min-w-0 items-baseline gap-4">
-                    <span className={`num-serif text-sm transition-colors duration-300 ${activeBranch === i ? "text-crimson" : "text-stone-deep"}`} aria-hidden="true">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="min-w-0">
-                      <span className={`block font-display text-[1.1rem] tracking-[-0.01em] transition-colors duration-300 ${activeBranch === i ? "text-crimson" : "text-ink group-hover:text-crimson"}`}>
-                        {L(b.nameEn, b.nameAm)}
-                      </span>
-                      {b.established && (
-                        <span className="mt-1 block text-[0.66rem] font-bold uppercase tracking-[0.18em] text-stone-deep">{b.established}</span>
-                      )}
-                    </span>
-                  </span>
-                  <ChevronRight
-                    className={`h-4 w-4 shrink-0 transition-all duration-300 ${activeBranch === i ? "translate-x-1 text-crimson" : "text-ink/35 group-hover:text-crimson"}`}
-                    aria-hidden="true"
-                  />
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-display text-[1.02rem] font-bold text-ice">{L(b.nameEn, b.nameAm)}</h3>
+                    <ChevronRight className={`h-4 w-4 text-cyan transition-transform ${activeBranch === i ? "translate-x-1" : ""}`} aria-hidden="true" />
+                  </div>
+                  {b.established && <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-clinic-red">{b.established}</p>}
                 </button>
               ))}
             </div>
             {data.branches[activeBranch] && (
               <Reveal className="h-full">
-                <div className="paper-card h-full p-7 md:p-8">
-                  <h3 className="h3 text-ink">{L(data.branches[activeBranch].nameEn, data.branches[activeBranch].nameAm)}</h3>
-                  <ul className="mt-5 space-y-4 text-sm text-stone-deep">
+                <div className="glass border-glow h-full rounded-2xl p-7">
+                  <h3 className="h3 text-ice">{L(data.branches[activeBranch].nameEn, data.branches[activeBranch].nameAm)}</h3>
+                  <ul className="mt-5 space-y-4 text-sm text-ice-dim">
                     <li className="flex gap-3">
-                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-crimson" aria-hidden="true" />
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-cyan" aria-hidden="true" />
                       {L(data.branches[activeBranch].addressEn, data.branches[activeBranch].addressAm)}
                     </li>
                     {data.branches[activeBranch].phone && (
                       <li className="flex gap-3">
-                        <Phone className="mt-0.5 h-4 w-4 shrink-0 text-crimson" aria-hidden="true" />
-                        <a href={`tel:${settings.phoneIntl}`} className="transition hover:text-crimson" dir="ltr">{data.branches[activeBranch].phone}</a>
+                        <Phone className="mt-0.5 h-4 w-4 shrink-0 text-cyan" aria-hidden="true" />
+                        <a href={`tel:${settings.phoneIntl}`} className="transition hover:text-cyan" dir="ltr">{data.branches[activeBranch].phone}</a>
                       </li>
                     )}
                   </ul>
                   {data.branches[activeBranch].mapEmbedUrl && (
-                    <div className="mt-6 overflow-hidden rounded-[8px] border border-ink/12">
+                    <div className="mt-6 overflow-hidden rounded-xl border border-white/10">
                       <iframe
                         src={data.branches[activeBranch].mapEmbedUrl}
                         title={`${data.branches[activeBranch].nameEn} map`}
@@ -217,12 +227,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 06 — team: ink-vignette closing band */}
+      {/* team preview */}
       {data.doctors.length > 0 && (
-        <section className="bg-ink-vignette grain on-dark relative section-pad">
+        <section className="bg-mesh-dark grain relative section-pad">
           <div className="container-x">
-            <SectionHeading dark align="center" index="06" eyebrow={str(teamHead, "eyebrow")} title={str(teamHead, "title")} subtitle={str(teamHead, "subtitle")} emphasizeLast />
-            <Reveal className="mt-10 text-center">
+            <SectionHeading eyebrow={str(teamHead, "eyebrow")} title={str(teamHead, "title")} subtitle={str(teamHead, "subtitle")} />
+            <Reveal className="mt-12 text-center">
               <ButtonRed onClick={() => navigate("/doctors")}>
                 {L("Meet the full team", "ሙሉውን ቡድን ይዩት")}
               </ButtonRed>
@@ -231,22 +241,22 @@ export default function AboutPage() {
         </section>
       )}
 
-      {/* 07 — gallery: porcelain grid with soft-rectangle frames */}
+      {/* gallery */}
       {data.gallery.length > 0 && (
-        <section className="bg-porcelain-flat relative section-pad">
+        <section className="relative section-pad bg-navy/60">
           <div className="container-x">
-            <SectionHeading index="07" eyebrow={str(galleryHead, "eyebrow")} title={str(galleryHead, "title")} subtitle={str(galleryHead, "subtitle")} emphasizeLast />
+            <SectionHeading eyebrow={str(galleryHead, "eyebrow")} title={str(galleryHead, "title")} subtitle={str(galleryHead, "subtitle")} />
             <StaggerGroup className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
               {data.gallery.slice(0, 8).map((g) => (
                 <StaggerItem key={g.id}>
-                  <div className="group relative aspect-square overflow-hidden rounded-[10px] border border-ink/10 bg-bone">
+                  <div className="group relative aspect-square overflow-hidden rounded-xl border border-white/8">
                     {g.type === "video" ? (
                       <video src={g.url} className="h-full w-full object-cover" muted loop playsInline preload="metadata" aria-label={g.alt || g.title} />
                     ) : (
-                      <Image src={g.url} alt={g.alt || g.title || "Clinic facility"} fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                      <Image src={g.url} alt={g.alt || g.title || "Clinic facility"} fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover transition duration-700 group-hover:scale-110" />
                     )}
                     <div className="absolute inset-0 flex items-end bg-gradient-to-t from-ink/85 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <p className="text-xs font-semibold text-porcelain">{g.title}</p>
+                      <p className="text-xs font-semibold text-ice">{g.title}</p>
                     </div>
                   </div>
                 </StaggerItem>
@@ -256,17 +266,21 @@ export default function AboutPage() {
         </section>
       )}
 
-      {/* closing stat band on ink */}
-      <section className="border-t border-porcelain/10 bg-ink py-14">
-        <div className="container-x">
-          <StatBand
-            dark
-            stats={[
-              { value: "5+", label: L("Years of Experience", "የሥራ ዓመታት") },
-              { value: "7k", label: L("Satisfied Patients", "የተሟላ ታካሚዎች") },
-              { value: "2", label: L("Branches", "ቅርንጫፎች") },
-            ]}
-          />
+      {/* stat band */}
+      <section className="border-t border-white/6 bg-ink py-12">
+        <div className="container-x flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-center">
+          {[
+            { value: "5+", label: L("Years of Experience", "የሥራ ዓመታት") },
+            { value: "7k", label: L("Satisfied Patients", "የተሟላ ታካሚዎች") },
+            { value: "2", label: L("Branches", "ቅርንጫፎች") },
+          ].map((s, i) => (
+            <div key={i} className="min-w-[9rem]">
+              <p className="font-display text-4xl font-bold text-gradient">
+                <Counter value={s.value} />
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.18em] text-ice-dim">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
     </>

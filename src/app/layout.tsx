@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 /* Self-hosted variable fonts — no build-time Google Fonts fetch (Vercel-safe) */
-import "@fontsource-variable/fraunces/full.css";
-import "@fontsource-variable/manrope";
-import "@fontsource-variable/noto-serif-ethiopic";
+import "@fontsource-variable/sora";
+import "@fontsource-variable/inter";
 import "@fontsource-variable/noto-sans-ethiopic";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -104,9 +103,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className="antialiased bg-porcelain text-ink"
-      >
+      <body className="antialiased bg-ink text-ice">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(medicalClinicJsonLd) }}

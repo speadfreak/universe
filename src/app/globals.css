@@ -3,30 +3,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Self-hosted variable fonts (@fontsource) — no build-time Google Fonts fetch */
-:root {
-  --font-serif-display: "Fraunces Variable", Georgia, serif;
-  --font-body: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-serif-ethiopic: "Noto Serif Ethiopic Variable", serif;
-  --font-ethiopic: "Noto Sans Ethiopic Variable", sans-serif;
-}
-
 /* ─────────────────────────────────────────────────────────────
-   UNIVERSE MEDICAL CENTER · "PORCELAIN & CRIMSON"
-   Derived from the logo: white wordmark, vivid red monogram, dark ground.
-   Warm and clinical. Never cold-neon.
+   UNIVERSE MEDICAL CENTER · "PORCELAIN & CRIMSON" COLOR CHEMISTRY
+   Derived from the logo: white wordmark, vivid red monogram, warm dark.
+   Same structure, same classes — only the chemistry changed.
 
    ink #111012 · graphite #1C1A1D · oxblood #4A0F18
    crimson #E3202B · crimson-deep #B5121C
    porcelain #F7F4EF · bone #ECE6DC · white #FFFFFF
    scrub #14403B · stone #8A8480
-
-   Usage ratio: 55% porcelain/bone · 30% ink/graphite/oxblood
-                10% crimson · 5% scrub
    ───────────────────────────────────────────────────────────── */
 
 @theme inline {
-  /* shadcn mapping */
+  /* shadcn mapping (re-themed to brand) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -50,26 +39,38 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* brand scale */
+  /* legacy brand scale — values now point at the new chemistry */
   --color-ink: var(--ink);
-  --color-graphite: var(--graphite);
-  --color-oxblood: var(--oxblood);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-brand: var(--blue);
+  --color-cyan: var(--cyan);
+  --color-ice: var(--ice);
+  --color-clinic-red: var(--red);
+  --color-ice-dim: #a79f99;
+
+  /* porcelain & crimson palette (admin + new surface helpers) */
   --color-crimson: var(--crimson);
   --color-crimson-deep: var(--crimson-deep);
   --color-porcelain: var(--porcelain);
+  --color-porcelain-deep: #f1ede6;
   --color-bone: var(--bone);
-  --color-paper: var(--white);
+  --color-graphite: var(--graphite);
+  --color-oxblood: var(--oxblood);
   --color-scrub: var(--scrub);
   --color-stone: var(--stone);
   --color-stone-deep: var(--stone-deep);
+  --color-paper: var(--white);
 
   --font-sans: var(--font-body), var(--font-ethiopic), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-serif-display), var(--font-serif-ethiopic), Georgia, serif;
-  --font-serif: var(--font-serif-display), var(--font-serif-ethiopic), Georgia, serif;
+  --font-display: var(--font-display), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-ethiopic: var(--font-ethiopic), var(--font-body), sans-serif;
+  --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif-display: var(--font-display), Georgia, serif;
 }
 
 :root {
-  --radius: 0.625rem; /* 10px — the button radius */
+  --radius: 0.75rem;
 
   /* brand primitives (crimson is overridable at runtime by Admin → Settings) */
   --ink: #111012;
@@ -82,14 +83,28 @@
   --white: #ffffff;
   --scrub: #14403b;
   --stone: #8a8480;
-  --stone-deep: #6b6560; /* AA-safe stone on porcelain */
+  --stone-deep: #6b6560;
 
   /* derived surfaces */
   --ink-soft: rgba(17, 16, 18, 0.64);
   --line-dark: rgba(17, 16, 18, 0.12); /* hairline on porcelain */
   --line-light: rgba(247, 244, 239, 0.14); /* hairline on ink */
 
-  /* light scheme (public site base + admin light) */
+  /* legacy token names → new chemistry (pure value swap, zero markup change) */
+  --navy: var(--graphite);
+  --navy-2: #262224;
+  --blue: var(--crimson);
+  --cyan: var(--crimson);
+  --ice: var(--porcelain);
+  --red: var(--crimson);
+
+  /* self-hosted variable fonts (@fontsource) — no build-time Google Fonts fetch */
+  --font-display: "Sora Variable", "Noto Sans Ethiopic Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter Variable", "Noto Sans Ethiopic Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-ethiopic: "Noto Sans Ethiopic Variable", "Inter Variable", sans-serif;
+  --font-sans: var(--font-body), var(--font-ethiopic), ui-sans-serif, system-ui, sans-serif;
+
+  /* light theme surfaces (admin + bright sections) */
   --background: var(--porcelain);
   --foreground: var(--ink);
   --card: var(--white);
@@ -110,8 +125,28 @@
   --ring: var(--crimson);
 }
 
-/* warm graphite dark scheme (admin dark mode) */
-.dark,
+.dark {
+  --background: var(--ink);
+  --foreground: var(--porcelain);
+  --card: var(--graphite);
+  --card-foreground: var(--porcelain);
+  --popover: var(--graphite);
+  --popover-foreground: var(--porcelain);
+  --primary: var(--crimson);
+  --primary-foreground: var(--white);
+  --secondary: #262224;
+  --secondary-foreground: var(--porcelain);
+  --muted: #262224;
+  --muted-foreground: #a9a29b;
+  --accent: #262224;
+  --accent-foreground: var(--porcelain);
+  --destructive: #ef5360;
+  --border: rgba(247, 244, 239, 0.12);
+  --input: rgba(247, 244, 239, 0.14);
+  --ring: var(--crimson);
+}
+
+/* admin warm-graphite dark scheme */
 .admin-dark {
   --background: #141214;
   --foreground: var(--porcelain);
@@ -134,27 +169,6 @@
   --line-dark: rgba(247, 244, 239, 0.12);
 }
 
-/* ─────────── admin panel helpers ─────────── */
-
-/* status chips — same tokens, legible in both admin schemes */
-.chip-new { background: rgba(227, 32, 43, 0.1); color: var(--crimson-deep); }
-.chip-confirmed { background: rgba(20, 64, 59, 0.12); color: var(--scrub); }
-.chip-completed { background: rgba(138, 132, 128, 0.14); color: var(--stone-deep); }
-.chip-cancelled { background: rgba(17, 16, 18, 0.07); color: var(--stone-deep); }
-.admin-dark .chip-new { background: rgba(227, 32, 43, 0.16); color: #ef5360; }
-.admin-dark .chip-confirmed { background: rgba(20, 64, 59, 0.45); color: #8fcfc0; }
-.admin-dark .chip-completed { background: rgba(247, 244, 239, 0.1); color: #b9b2aa; }
-.admin-dark .chip-cancelled { background: rgba(247, 244, 239, 0.07); color: #8f8a94; }
-.chip-published { background: rgba(20, 64, 59, 0.12); color: var(--scrub); }
-.chip-draft { background: rgba(138, 132, 128, 0.14); color: var(--stone-deep); }
-.chip-scheduled { background: rgba(227, 32, 43, 0.1); color: var(--crimson-deep); }
-.admin-dark .chip-published { background: rgba(20, 64, 59, 0.45); color: #8fcfc0; }
-.admin-dark .chip-draft { background: rgba(247, 244, 239, 0.1); color: #b9b2aa; }
-.admin-dark .chip-scheduled { background: rgba(227, 32, 43, 0.16); color: #ef5360; }
-
-/* admin dark-mode scrollbars stay warm */
-.admin-dark ::-webkit-scrollbar-track { background: #141214; }
-
 /* ───────────────────────── base ───────────────────────── */
 
 html {
@@ -176,38 +190,44 @@ html.lenis body {
 }
 
 body {
-  background: var(--porcelain);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--ice);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
 }
 
-::selection {
-  background: var(--crimson);
-  color: var(--white);
+html[lang="am"] body {
+  font-family: var(--font-ethiopic);
+  line-height: 1.75;
 }
 
-/* custom scrollbar — warm ink, no gradient */
+::selection {
+  background: var(--crimson);
+  color: #ffffff;
+  text-shadow: none;
+}
+
+/* custom scrollbar — warm crimson over ink */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--ink);
+  background: #131013;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a3639;
+  background: linear-gradient(180deg, #e3202b, #7e1019);
   border-radius: 8px;
-  border: 2px solid var(--ink);
+  border: 2px solid #131013;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--crimson-deep);
+  background: linear-gradient(180deg, #ff5a63, #e3202b);
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3a3639 var(--ink);
+  scrollbar-color: #7e1019 #131013;
 }
 
 /* focus — crimson or ink, always warm */
@@ -233,7 +253,7 @@ body {
   padding: 10px 18px;
   border-radius: 10px;
   background: var(--crimson);
-  color: var(--white);
+  color: #fff;
   font-weight: 600;
   transition: top 0.2s ease;
 }
@@ -245,81 +265,113 @@ body {
 
 .h-display {
   font-family: var(--font-display);
-  font-weight: 560;
-  letter-spacing: -0.028em;
-  line-height: 1.02;
-  font-size: clamp(2.6rem, 6.4vw, 5rem);
-  font-variation-settings: "opsz" 96, "SOFT" 40, "WONK" 0;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  font-size: clamp(2.4rem, 6.2vw, 4.6rem);
 }
 .h1 {
   font-family: var(--font-display);
-  font-weight: 540;
-  letter-spacing: -0.022em;
-  line-height: 1.06;
-  font-size: clamp(2.05rem, 4.6vw, 3.55rem);
-  font-variation-settings: "opsz" 60, "SOFT" 30, "WONK" 0;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
 }
 .h2 {
   font-family: var(--font-display);
-  font-weight: 540;
-  letter-spacing: -0.018em;
-  line-height: 1.1;
-  font-size: clamp(1.65rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
 }
 .h3 {
   font-family: var(--font-display);
-  font-weight: 540;
+  font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 1.18;
-  font-size: clamp(1.18rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
 }
 .lead {
   font-size: clamp(1.02rem, 1.5vw, 1.22rem);
   line-height: 1.75;
-  color: var(--ink-soft);
+  color: rgba(247, 244, 239, 0.75);
 }
 .on-dark .lead,
 .lead-on-dark {
   color: rgba(247, 244, 239, 0.74);
 }
 .eyebrow {
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
 }
 
-/* one italic serif word per headline, in crimson — never gradient */
+/* one italic accent word, in crimson — never gradient */
 .word-accent {
   font-style: italic;
-  font-weight: 480;
+  font-weight: 640;
   color: var(--crimson);
-  font-variation-settings: "opsz" 96, "SOFT" 60, "WONK" 1;
 }
 
-/* huge serif numerals for stats */
+/* large display numerals (stats, journey counters) */
 .num-serif {
   font-family: var(--font-display);
-  font-weight: 520;
+  font-weight: 680;
   letter-spacing: -0.03em;
   font-variant-numeric: lining-nums;
-  font-variation-settings: "opsz" 96;
 }
 
 html[lang="am"] .h-display,
 html[lang="am"] .h1,
-html[lang="am"] .h2 {
+html[lang="am"] .h2,
+html[lang="am"] .h-3 {
   letter-spacing: 0;
-  line-height: 1.28;
-}
-html[lang="am"] .word-accent {
-  font-style: normal;
+  line-height: 1.25;
 }
 
 /* ───────────────────────── surfaces & effects ───────────────────────── */
 
-/* dark sections: warm ink + soft oxblood vignette — no glow, no neon */
+.glass {
+  background: rgba(247, 244, 239, 0.045);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(247, 244, 239, 0.1);
+}
+.glass-strong {
+  background: rgba(17, 16, 18, 0.78);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  border: 1px solid rgba(247, 244, 239, 0.12);
+}
+.glass-ice {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(17, 16, 18, 0.08);
+}
+
+/* dark sections: warm ink + soft oxblood glow — never neon */
+.bg-mesh-dark {
+  background:
+    radial-gradient(52rem 30rem at 12% -6%, rgba(227, 32, 43, 0.09), transparent 60%),
+    radial-gradient(40rem 26rem at 96% 8%, rgba(74, 15, 24, 0.35), transparent 55%),
+    radial-gradient(46rem 34rem at 50% 118%, rgba(181, 18, 28, 0.1), transparent 60%),
+    var(--ink);
+}
+.bg-mesh-navy {
+  background:
+    radial-gradient(44rem 26rem at 88% -4%, rgba(227, 32, 43, 0.07), transparent 55%),
+    radial-gradient(40rem 30rem at 4% 100%, rgba(74, 15, 24, 0.4), transparent 58%),
+    var(--navy);
+}
+.bg-mesh-ice {
+  background:
+    radial-gradient(42rem 24rem at 100% 0%, rgba(227, 32, 43, 0.05), transparent 55%),
+    radial-gradient(38rem 26rem at 0% 100%, rgba(20, 64, 59, 0.06), transparent 52%),
+    var(--ice);
+}
 .bg-ink-vignette {
   background:
     radial-gradient(58rem 34rem at 14% -10%, rgba(74, 15, 24, 0.42), transparent 62%),
@@ -345,23 +397,73 @@ html[lang="am"] .word-accent {
     var(--porcelain);
 }
 
-/* paper grain — 2.5% noise overlay for cards & dark sections */
-.grain {
-  position: relative;
-  isolation: isolate;
+/* slow warm gradient drift for the hero fallback */
+@keyframes warm-drift {
+  0%,
+  100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 60% 40%;
+  }
 }
+.bg-warm-drift {
+  background: linear-gradient(152deg, #111012 0%, #2a1015 42%, #4a0f18 78%, #111012 100%);
+  background-size: 160% 160%;
+  animation: warm-drift 22s ease-in-out infinite;
+}
+
 .grain::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
   pointer-events: none;
-  opacity: 0.025;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.grain > * {
+
+.glow-blue {
+  box-shadow:
+    0 0 24px rgba(227, 32, 43, 0.22),
+    0 0 80px rgba(227, 32, 43, 0.08);
+}
+.glow-red {
+  box-shadow:
+    0 0 18px rgba(227, 32, 43, 0.4),
+    0 0 60px rgba(227, 32, 43, 0.15);
+}
+.text-gradient {
+  display: inline-block;
+  background: linear-gradient(92deg, #ff6b72 0%, #e3202b 48%, #a31019 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.border-glow {
   position: relative;
-  z-index: 1;
+}
+.border-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(227, 32, 43, 0.45), rgba(181, 18, 28, 0.1) 40%, rgba(227, 32, 43, 0.3));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.section-pad {
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+.container-x {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.1rem, 4vw, 2.5rem);
 }
 
 /* hairline rules instead of card borders */
@@ -394,28 +496,6 @@ html[lang="am"] .word-accent {
   border-radius: 220px 220px var(--radius) var(--radius);
 }
 
-/* editorial card: porcelain/bone surface + hairline, hover = crimson hairline + lift */
-.paper-card {
-  position: relative;
-  background: var(--white);
-  border: 1px solid var(--line-dark);
-  border-radius: var(--radius);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.5s ease;
-}
-.paper-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(227, 32, 43, 0.55);
-  box-shadow: 0 20px 48px -26px rgba(17, 16, 18, 0.3);
-}
-.on-dark .paper-card {
-  background: rgba(247, 244, 239, 0.045);
-  border-color: var(--line-light);
-}
-.on-dark .paper-card:hover {
-  border-color: rgba(227, 32, 43, 0.6);
-  background: rgba(247, 244, 239, 0.07);
-}
-
 /* ───────────────────────── animations ───────────────────────── */
 
 @keyframes ecg-run {
@@ -428,8 +508,20 @@ html[lang="am"] .word-accent {
 }
 .ecg-line {
   stroke-dasharray: 1400;
-  animation: ecg-run 3.4s linear infinite;
-  filter: none; /* no glow — a decisive crimson line */
+  animation: ecg-run 3.2s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(227, 32, 43, 0.5));
+}
+
+/* hero ECG one-shot draw */
+@keyframes hero-ecg {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.ecg-draw {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: hero-ecg 2.6s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
 }
 
 @keyframes heartbeat {
@@ -465,7 +557,7 @@ html[lang="am"] .word-accent {
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee-x 44s linear infinite;
+  animation: marquee-x 36s linear infinite;
 }
 .marquee-track:hover {
   animation-play-state: paused;
@@ -484,30 +576,41 @@ html[lang="am"] .word-accent {
   animation: float-y 6s ease-in-out infinite;
 }
 
-/* hero ECG one-shot draw */
-@keyframes hero-ecg {
+@keyframes spin-slow {
   to {
-    stroke-dashoffset: 0;
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin-slow 14s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }
 
-/* slow warm gradient drift for the hero fallback */
-@keyframes warm-drift {
-  0%,
-  100% {
-    background-position: 0% 0%;
+@keyframes grid-drift {
+  from {
+    background-position: 0 0;
   }
-  50% {
-    background-position: 60% 40%;
+  to {
+    background-position: 64px 64px;
   }
 }
-.bg-warm-drift {
-  background: linear-gradient(152deg, #111012 0%, #2a1015 42%, #4a0f18 78%, #111012 100%);
-  background-size: 160% 160%;
-  animation: warm-drift 22s ease-in-out infinite;
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(247, 244, 239, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 244, 239, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  animation: grid-drift 12s linear infinite;
 }
 
-/* custom cursor — warm ink ring with crimson active state */
+/* custom cursor — porcelain ring on warm ink, crimson active state */
 .cursor-dot,
 .cursor-ring {
   position: fixed;
@@ -519,10 +622,13 @@ html[lang="am"] .word-accent {
   will-change: transform;
 }
 .cursor-ring {
-  width: 34px;
-  height: 34px;
-  margin: -17px 0 0 -17px;
-  border: 1.5px solid rgba(17, 16, 18, 0.55);
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 1.5px solid rgba(247, 244, 239, 0.55);
+  box-shadow:
+    0 0 14px rgba(227, 32, 43, 0.15),
+    inset 0 0 10px rgba(227, 32, 43, 0.08);
   transition: width 0.18s ease, height 0.18s ease, margin 0.18s ease, border-color 0.18s ease, opacity 0.18s ease;
 }
 .cursor-dot {
@@ -532,11 +638,75 @@ html[lang="am"] .word-accent {
   background: var(--crimson);
 }
 .cursor-ring.is-active {
-  width: 54px;
-  height: 54px;
-  margin: -27px 0 0 -27px;
-  border-color: rgba(227, 32, 43, 0.9);
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  border-color: rgba(227, 32, 43, 0.85);
 }
+
+/* ───────────────────────── patient journey states ─────────────────────────
+   The pinned journey scrub toggles .is-active / .is-current on each step;
+   these rules make that scrub visibly alive (crimson progression). */
+
+.journey-step {
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.journey-step.is-active {
+  opacity: 1;
+}
+.journey-step.is-current {
+  transform: translateY(-3px);
+}
+.journey-step > span:first-child {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+.journey-step.is-active > span:first-child {
+  color: var(--crimson);
+  border-color: rgba(227, 32, 43, 0.5);
+  background: rgba(227, 32, 43, 0.08);
+}
+.journey-step.is-current > span:first-child {
+  color: #ffffff;
+  background: var(--crimson);
+  border-color: var(--crimson);
+  box-shadow: 0 0 26px -6px rgba(227, 32, 43, 0.6);
+}
+.journey-step h3 {
+  transition: color 0.45s ease;
+}
+.journey-step.is-active h3 {
+  color: var(--ice);
+}
+.journey-progress {
+  box-shadow: 0 0 20px -4px rgba(227, 32, 43, 0.55);
+}
+
+/* ───────────────────────── admin helpers ───────────────────────── */
+
+/* status chips — same tokens, legible in both admin schemes */
+.chip-new { background: rgba(227, 32, 43, 0.1); color: var(--crimson-deep); }
+.chip-confirmed { background: rgba(20, 64, 59, 0.12); color: var(--scrub); }
+.chip-completed { background: rgba(138, 132, 128, 0.14); color: var(--stone-deep); }
+.chip-cancelled { background: rgba(17, 16, 18, 0.07); color: var(--stone-deep); }
+.admin-dark .chip-new { background: rgba(227, 32, 43, 0.16); color: #ef5360; }
+.admin-dark .chip-confirmed { background: rgba(20, 64, 59, 0.45); color: #8fcfc0; }
+.admin-dark .chip-completed { background: rgba(247, 244, 239, 0.1); color: #b9b2aa; }
+.admin-dark .chip-cancelled { background: rgba(247, 244, 239, 0.07); color: #8f8a94; }
+.chip-published { background: rgba(20, 64, 59, 0.12); color: var(--scrub); }
+.chip-draft { background: rgba(138, 132, 128, 0.14); color: var(--stone-deep); }
+.chip-scheduled { background: rgba(227, 32, 43, 0.1); color: var(--crimson-deep); }
+.admin-dark .chip-published { background: rgba(20, 64, 59, 0.45); color: #8fcfc0; }
+.admin-dark .chip-draft { background: rgba(247, 244, 239, 0.1); color: #b9b2aa; }
+.admin-dark .chip-scheduled { background: rgba(227, 32, 43, 0.16); color: #ef5360; }
+
+/* admin dark-mode scrollbars stay warm */
+.admin-dark ::-webkit-scrollbar-track { background: #141214; }
 
 /* markdown content (blog / legal) */
 .md-content > * + * {
@@ -544,21 +714,25 @@ html[lang="am"] .word-accent {
 }
 .md-content h2 {
   font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 560;
-  letter-spacing: -0.018em;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin-top: 2.2em;
   scroll-margin-top: 110px;
 }
 .md-content h3 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 540;
+  font-size: 1.18rem;
+  font-weight: 600;
   margin-top: 1.8em;
 }
 .md-content p,
 .md-content li {
   line-height: 1.85;
+  color: rgba(247, 244, 239, 0.78);
+}
+.md-content .md-light p,
+.md-content .md-light li {
   color: rgba(17, 16, 18, 0.78);
 }
 .md-content strong {
@@ -577,15 +751,17 @@ html[lang="am"] .word-accent {
   margin-top: 0.4em;
 }
 .md-content a {
-  color: var(--crimson-deep);
+  color: var(--cyan);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.md-content .md-light a {
+  color: var(--blue);
+}
 .md-content blockquote {
-  border-left: 3px solid var(--crimson);
+  border-left: 3px solid var(--blue);
   padding-left: 1rem;
   font-style: italic;
-  color: rgba(17, 16, 18, 0.85);
 }
 
 /* scroll behavior helper */
@@ -612,9 +788,15 @@ html[lang="am"] .word-accent {
   }
   .marquee-track,
   .ecg-line,
+  .ecg-draw,
   .pulse-dot,
   .float-y,
-  .bg-warm-drift {
+  .bg-grid,
+  .bg-warm-drift,
+  .spin-slow {
     animation: none !important;
+  }
+  .ecg-draw {
+    stroke-dashoffset: 0 !important;
   }
 }

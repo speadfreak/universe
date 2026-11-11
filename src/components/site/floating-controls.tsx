@@ -5,9 +5,9 @@ import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { ArrowUp, CalendarCheck, MapPinned, Phone } from "lucide-react";
 import { lenisRef, useSite } from "./site-context";
 
-/** Back-to-top with crimson progress ring on ink (desktop) + mobile sticky action bar. */
+/** Back-to-top with circular page-progress ring (desktop) + mobile sticky action bar. */
 export function FloatingControls() {
-  const { t, navigate, settings } = useSite();
+  const { t, navigate, settings, L, data } = useSite();
   const [visible, setVisible] = useState(false);
   const { scrollYProgress } = useScroll();
   const smooth = useSpring(scrollYProgress, { stiffness: 140, damping: 28 });
@@ -42,7 +42,7 @@ export function FloatingControls() {
             data-cursor="link"
           >
             <svg viewBox="0 0 48 48" className="absolute inset-0 h-full w-full -rotate-90">
-              <circle cx="24" cy="24" r={R} fill="rgba(17,16,18,0.9)" stroke="rgba(247,244,239,0.16)" strokeWidth="2.5" />
+              <circle cx="24" cy="24" r={R} fill="rgba(17,16,18,0.75)" stroke="rgba(247,244,239,0.16)" strokeWidth="2.5" />
               <motion.circle
                 cx="24"
                 cy="24"
@@ -55,35 +55,35 @@ export function FloatingControls() {
                 style={{ strokeDashoffset: dashOffset }}
               />
             </svg>
-            <ArrowUp className="relative h-4.5 w-4.5 text-porcelain transition-transform duration-300 group-hover:-translate-y-0.5" aria-hidden="true" />
+            <ArrowUp className="relative h-4.5 w-4.5 text-cyan transition-transform duration-300 group-hover:-translate-y-0.5" aria-hidden="true" />
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* mobile bottom action bar — ink with crimson marks */}
+      {/* mobile bottom action bar */}
       <nav
-        className="safe-bottom fixed inset-x-0 bottom-0 z-[95] grid grid-cols-3 border-t border-porcelain/10 bg-ink lg:hidden"
+        className="safe-bottom fixed inset-x-0 bottom-0 z-[95] grid grid-cols-3 border-t border-cyan/15 bg-ink/90 backdrop-blur-xl lg:hidden"
         aria-label="Quick actions"
       >
         <a
           href={`tel:${settings.phoneIntl}`}
-          className="flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-porcelain/85 transition active:bg-porcelain/6"
+          className="flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-ice transition active:bg-white/5"
         >
-          <Phone className="h-4.5 w-4.5 text-crimson" aria-hidden="true" />
+          <Phone className="h-4.5 w-4.5 text-cyan" aria-hidden="true" />
           {t("common.callNow").split(" ").slice(0, 2).join(" ")}
         </a>
         <button
           onClick={() => navigate("/book")}
-          className="relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 bg-crimson text-[0.68rem] font-semibold uppercase tracking-wider text-white transition active:bg-crimson-deep"
+          className="relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 bg-clinic-red/95 text-[0.68rem] font-semibold uppercase tracking-wider text-white transition active:bg-clinic-red"
         >
           <CalendarCheck className="h-4.5 w-4.5" aria-hidden="true" />
           {t("common.bookNow").split(" ").slice(0, 2).join(" ")}
         </button>
         <button
           onClick={() => navigate("/contact")}
-          className="flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-porcelain/85 transition active:bg-porcelain/6"
+          className="flex min-h-[56px] flex-col items-center justify-center gap-0.5 text-[0.68rem] font-semibold uppercase tracking-wider text-ice transition active:bg-white/5"
         >
-          <MapPinned className="h-4.5 w-4.5 text-crimson" aria-hidden="true" />
+          <MapPinned className="h-4.5 w-4.5 text-cyan" aria-hidden="true" />
           {t("common.directions")}
         </button>
       </nav>
