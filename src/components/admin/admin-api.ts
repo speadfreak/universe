@@ -40,6 +40,15 @@ export async function uploadMedia(file: File, alt = "", name = ""): Promise<ApiR
   }
 }
 
+/** Human-readable file size, e.g. "12 KB" or "3.4 MB". */
+export function formatBytes(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB"] as const;
+  const i = Math.min(units.length - 1, Math.floor(Math.log(n) / Math.log(1024)));
+  const value = n / 1024 ** i;
+  return `${i === 0 || value >= 100 ? Math.round(value) : value.toFixed(1)} ${units[i]}`;
+}
+
 /** Client-side image compression before upload. */
 export async function compressImage(file: File, maxDim = 1920, quality = 0.82): Promise<File> {
   if (!file.type.startsWith("image/") || file.type === "image/gif" || file.type === "image/svg+xml") return file;

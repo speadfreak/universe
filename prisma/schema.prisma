@@ -57,6 +57,22 @@ model Setting {
   updatedAt DateTime @updatedAt
 }
 
+// ───────────────────── Page backdrops (photographic hero/band system) ─────────────────────
+// One row per slot key ("hero.about", "band.call-for-help", …). The slot registry in
+// src/lib/backdrops.ts defines every valid key + defaults; rows here are the admin-editable
+// overrides. Empty images + mode "gradient" = tasteful warm fallback (never a grid).
+
+model BackdropSlot {
+  key       String   @id // slot key, e.g. "hero.about"
+  mode      String   @default("gradient") // single | slideshow | kenburns | gradient
+  images    Json     @default("[]") // [{ url, alt, focal:{x,y}, mobileUrl?, mobileFocal:{x,y} }]
+  darkness  Float    @default(0.62) // 0..1 overlay darkness
+  warmth    Float    @default(0.4) // 0..1 warm grade strength
+  textSide  String   @default("left") // left | right
+  parallax  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
+
 // ───────────────────────── Collections ─────────────────────────
 
 model Service {

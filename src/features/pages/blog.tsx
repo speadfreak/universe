@@ -35,7 +35,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Blog", "ብሎግ")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.blog" crumb={L("Blog", "ብሎግ")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x">

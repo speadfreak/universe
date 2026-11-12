@@ -147,3 +147,41 @@ Every appointment carries a unique reference code (`UMC-XXXXXX`) used across the
 ## License
 
 © 2026 Universe Medical Center. All rights reserved.
+
+## Photographic page backdrops — shot list
+
+Every page hero and full-bleed band renders through the `PageBackdrop` system
+(photograph + warm ink→oxblood grade + film grain + vignette + curved bottom
+edge). Slots are editable in **Admin → Page backgrounds** (upload, replace,
+remove, reorder, media-library pick, focal-point marker, separate mobile crop,
+alt text, mode, darkness/warmth, text side, parallax, live preview with a
+WCAG-AA contrast chip). Uploads are compressed client-side (2400px desktop /
+900px mobile crop, <2 MB each) and stored in the media library.
+
+The site currently ships with warm-graded stand-in photography in
+`public/img/backdrops/`. Replace them with real photos per the shot list below
+— upload via Admin → Page backgrounds, or commit files with these names:
+
+| Slot | Stand-in file | Real photo to shoot |
+| --- | --- | --- |
+| Home hero (`hero.home`) | `bd-home.jpg` | Care in action — a clinician listening to a patient, warm window light (or a short silent video in Settings → Hero video) |
+| About (`hero.about`) | `bd-about.jpg` | The clinic building with the team outside, morning light |
+| Services (`hero.services`) | `bd-services.jpg` | Lab bench, ultrasound room or corridor detail |
+| Service detail pages (`hero.service.<slug>`) | falls back to each service's card image | One establishing photo per service (lab, imaging, consultation room, …) |
+| Doctors (`hero.doctors`) | `bd-doctors.jpg` | Consulting-room light — desk, stethoscope, patient files |
+| Packages (`hero.packages`) | `bd-packages.jpg` | Reception desk and checkup moments |
+| Blog (`hero.blog`) | `bd-blog.jpg` | Calm editorial still life — journal, tea, glasses |
+| Blog posts (`hero.post`) | warm gradient (each post's cover is used automatically) | Per-article photography if no cover is set |
+| Contact (`hero.contact`) | `bd-contact.jpg` | Building exterior and street — Lemi Kura / Ambo |
+| Book appointment (`hero.book`) | `bd-book.jpg` | Reassuring waiting area, soft chairs, plants |
+| Patient resources (`hero.resources`) | `bd-resources.jpg` | Health-education leaflets on a warm desk |
+| Privacy & terms (`hero.legal`), 404 (`hero.404`) | warm gradient by design | — |
+| Call-for-help banner (`band.call-help`) | `bd-band-help.jpg` | Hands holding a phone — urgency + warmth, dark grade |
+| Patient-journey band (`band.journey`) | `bd-band-journey.jpg` | Patient and nurse walking a sunlit corridor |
+| Final CTA (`band.final-cta`) | `bd-band-final.jpg` | Warm handshake at the doorway, dusk rim light |
+| Footer top (`band.footer-top`) | `bd-band-footer.jpg` | Building at dusk, warm windows, long exposure |
+
+Any slot without a photo renders the tasteful warm fallback (slow
+ink→oxblood gradient with film grain and a faint logo-circle outline) — never
+a grid, never an empty box. Old grid-line backgrounds are fully removed from
+the codebase.

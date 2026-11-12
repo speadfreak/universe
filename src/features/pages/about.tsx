@@ -39,7 +39,7 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd data={orgSchema} />
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("About", "ስለ እኛ")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.about" crumb={L("About", "ስለ እኛ")} />
 
       {/* story */}
       <section className="bg-mesh-dark grain relative section-pad">

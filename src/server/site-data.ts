@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { SETTINGS_DEFAULTS, type SiteSettings } from "@/lib/settings-defaults";
+import { publicBackdropMap, type BackdropRow } from "@/lib/backdrops";
 import type {
   BranchDTO, DoctorDTO, FaqDTO, GalleryDTO, PackageDTO, PostDTO, SectionRow, ServiceDTO, SiteData, TestimonialDTO,
 } from "@/lib/site-types";
@@ -24,7 +25,7 @@ async function loadSettings(): Promise<SiteSettings> {
 }
 
 export async function getSiteData(): Promise<SiteData> {
-  const [settings, sections, services, doctors, packages, posts, testimonials, faqs, gallery, branches] =
+  const [settings, sections, services, doctors, packages, posts, testimonials, faqs, gallery, branches, backdropRows] =
     await Promise.all([
       loadSettings(),
       db.pageSection.findMany({ orderBy: { sortOrder: "asc" } }),
@@ -39,7 +40,13 @@ export async function getSiteData(): Promise<SiteData> {
       db.faq.findMany({ where: { visible: true }, orderBy: { order: "asc" } }),
       db.galleryItem.findMany({ where: { visible: true }, orderBy: { order: "asc" } }),
       db.branch.findMany({ where: { visible: true }, orderBy: { order: "asc" } }),
+      db.backdropSlot.findMany(),
     ]);
+
+  const backdrops = publicBackdropMap(
+    backdropRows as unknown as BackdropRow[],
+    services.map((sv) => ({ slug: sv.slug, image: sv.image, titleEn: sv.titleEn, titleAm: sv.titleAm })),
+  );
 
   const content: SiteData["content"] = {};
   const sectionsIndex: SiteData["sectionsIndex"] = {};
@@ -141,6 +148,7 @@ export async function getSiteData(): Promise<SiteData> {
     settings,
     content,
     sectionsIndex,
+    backdrops,
     services: serviceDTOs,
     doctors: doctorDTOs,
     packages: packageDTOs,

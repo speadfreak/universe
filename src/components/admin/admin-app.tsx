@@ -5,11 +5,12 @@ import Image from "next/image";
 import {
   LayoutDashboard, Layers, LibraryBig, Inbox, Settings2, ScrollText, LogOut, LogIn,
   Users, Stethoscope, Package, Newspaper, MessageSquareQuote, HelpCircle, Images, Building2,
-  Loader2, ExternalLink, Lock, Moon, Sun, UserRoundCog,
+  Loader2, ExternalLink, Lock, Moon, Sun, UserRoundCog, Wallpaper,
 } from "lucide-react";
 import { api, type AdminUser } from "./admin-api";
 import { AdminDashboard } from "./admin-dashboard";
 import { AdminContent } from "./admin-content";
+import AdminBackdrops from "./admin-backdrops";
 import { AdminCollections } from "./admin-collections";
 import { AdminMedia } from "./admin-media";
 import { AdminInbox } from "./admin-inbox";
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
 type View =
   | { kind: "dashboard" }
   | { kind: "content" }
+  | { kind: "backdrops" }
   | { kind: "collection"; entity: string }
   | { kind: "media" }
   | { kind: "inbox"; tab: "messages" | "appointments" }
@@ -39,6 +41,7 @@ const NAV: Array<{ section: string; items: Array<{ label: string; icon: React.Co
     section: "Website",
     items: [
       { label: "Content sections", icon: Layers, view: { kind: "content" }, roles: ["super_admin", "editor"] },
+      { label: "Page backgrounds", icon: Wallpaper, view: { kind: "backdrops" }, roles: ["super_admin", "editor"] },
       { label: "Services", icon: Stethoscope, view: { kind: "collection", entity: "services" }, roles: ["super_admin", "editor"] },
       { label: "Doctors", icon: Users, view: { kind: "collection", entity: "doctors" }, roles: ["super_admin", "editor"] },
       { label: "Packages", icon: Package, view: { kind: "collection", entity: "packages" }, roles: ["super_admin", "editor"] },
@@ -223,6 +226,7 @@ export default function AdminApp() {
           <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
             {view.kind === "dashboard" && <AdminDashboard onNavigate={(v) => currentRoles(["*"]) && setView(v)} />}
             {view.kind === "content" && <AdminContent />}
+            {view.kind === "backdrops" && <AdminBackdrops />}
             {view.kind === "collection" && <AdminCollections entity={view.entity} />}
             {view.kind === "media" && <AdminMedia />}
             {view.kind === "inbox" && <AdminInbox tab={view.tab} onTabChange={(tab) => setView({ kind: "inbox", tab })} />}
@@ -240,6 +244,7 @@ function viewTitle(view: View): string {
   switch (view.kind) {
     case "dashboard": return "Dashboard";
     case "content": return "Content sections";
+    case "backdrops": return "Page backgrounds";
     case "media": return "Media library";
     case "settings": return "Global settings";
     case "account": return "My account";

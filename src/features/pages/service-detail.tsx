@@ -41,7 +41,7 @@ export default function ServiceDetailPage({ slug }: { slug: string }) {
   return (
     <>
       <JsonLd data={physicianSchema} />
-      <PageHero title={L(service.titleEn, service.titleAm)} subtitle={L(service.taglineEn, service.taglineAm) || L(service.excerptEn, service.excerptAm)} crumb={L("Services", "አገልግሎቶች")} />
+      <PageHero slot={`hero.service.${slug}`} title={L(service.titleEn, service.titleAm)} subtitle={L(service.taglineEn, service.taglineAm) || L(service.excerptEn, service.excerptAm)} crumb={L("Services", "አገልግሎቶች")} />
 
       <section className="relative section-pad bg-mesh-dark">
         <div className="container-x grid gap-12 lg:grid-cols-[1.6fr_1fr]">

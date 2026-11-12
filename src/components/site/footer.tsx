@@ -5,6 +5,7 @@ import { Facebook, Linkedin, Mail, MapPin, Phone, Send, Clock } from "lucide-rea
 import Image from "next/image";
 import { A, useSite } from "./site-context";
 import { EcgDivider } from "./bits";
+import { PageBackdrop } from "./page-backdrop";
 import { Reveal } from "./motion";
 import { toast } from "sonner";
 
@@ -61,6 +62,13 @@ export function Footer() {
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-[#0d0c0e]">
+      {/* footer-top photographic band — faint dusk photo melting into ink */}
+      <PageBackdrop
+        config={data.backdrops?.["band.footer-top"]}
+        slotKey="band.footer-top"
+        edge="none"
+        className="absolute inset-0"
+      />
       {/* glowing top edge */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/70 to-transparent" aria-hidden="true" />
       <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-brand/8 to-transparent" aria-hidden="true" />

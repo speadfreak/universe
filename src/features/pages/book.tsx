@@ -140,7 +140,7 @@ export default function BookPage() {
 
   return (
     <>
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={t("nav.book")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.book" crumb={t("nav.book")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x max-w-3xl">

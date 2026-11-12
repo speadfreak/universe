@@ -22,6 +22,7 @@ export default function LegalPage({ doc }: { doc: "privacy" | "terms" }) {
   return (
     <>
       <PageHero
+        slot="hero.legal"
         title={doc === "privacy" ? L("Privacy Policy", "የግላዊነት ፖሊሲ") : L("Terms of Service", "የአገልግሎት ውሎች")}
         crumb={doc === "privacy" ? L("Privacy", "ግላዊነት") : L("Terms", "ውሎች")}
       />

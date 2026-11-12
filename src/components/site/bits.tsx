@@ -7,8 +7,9 @@ import {
   ShieldCheck, Sparkles, PhoneCall, MapPin, Mail, ArrowUpRight, ChevronDown, Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { A } from "./site-context";
+import { A, useSite } from "./site-context";
 import { Reveal, SplitWords } from "./motion";
+import { PageBackdrop } from "./page-backdrop";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
   stethoscope: Stethoscope,
@@ -166,38 +167,46 @@ export function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-/* ── Page hero banner (inner pages) ──────────────────────── */
+/* ── Page hero banner (inner pages) — photographic PageBackdrop ──── */
 
 export function PageHero({
+  slot,
   title,
   subtitle,
   crumb,
 }: {
+  /** Backdrop slot key, e.g. "hero.about" or "hero.service.<slug>". */
+  slot: string;
   title: string;
   subtitle?: string;
   crumb: string;
 }) {
+  const { data } = useSite();
   return (
-    <section className="bg-mesh-dark grain relative overflow-hidden pb-16 pt-36 sm:pb-20 sm:pt-44">
-      <div className="bg-grid absolute inset-0 opacity-60" aria-hidden="true" />
-      <div className="absolute -top-24 left-1/2 h-64 w-[46rem] -translate-x-1/2 rounded-full bg-brand/20 blur-[110px]" aria-hidden="true" />
-      <div className="container-x relative">
-        <Reveal>
-          <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-ice-dim">
-            <A href="/" className="transition hover:text-cyan">Home</A>
-            <ChevronDown className="h-3 w-3 -rotate-90" aria-hidden="true" />
-            <span className="text-cyan">{crumb}</span>
-          </nav>
+    <PageBackdrop
+      config={data.backdrops?.[slot]}
+      slotKey={slot}
+      as="section"
+      priority
+      edge="curve"
+      className="pb-20 pt-36 sm:pb-24 sm:pt-44"
+      childClassName="container-x"
+    >
+      <Reveal>
+        <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.18em] text-ice-dim">
+          <A href="/" className="transition hover:text-crimson">Home</A>
+          <ChevronDown className="h-3 w-3 -rotate-90" aria-hidden="true" />
+          <span className="text-crimson">{crumb}</span>
+        </nav>
+      </Reveal>
+      <h1 className="h-display max-w-3xl text-ice">
+        <SplitWords text={title} />
+      </h1>
+      {subtitle && (
+        <Reveal delay={0.15}>
+          <p className="lead mt-5 max-w-xl">{subtitle}</p>
         </Reveal>
-        <h1 className="h-display max-w-3xl text-ice">
-          <SplitWords text={title} />
-        </h1>
-        {subtitle && (
-          <Reveal delay={0.15}>
-            <p className="lead mt-5 max-w-xl">{subtitle}</p>
-          </Reveal>
-        )}
-      </div>
-    </section>
+      )}
+    </PageBackdrop>
   );
 }

@@ -7,11 +7,11 @@ import {
   ArrowRight, BadgeCheck, CalendarCheck, ChevronDown, CheckCircle2, PhoneCall,
 } from "lucide-react";
 import { useSite } from "@/components/site/site-context";
-import { HeroCanvas } from "@/components/site/hero-canvas";
-import { ButtonGlass, ButtonRed, EcgDivider, GlassCard, IconFor, JsonLd, SectionHeading } from "@/components/site/bits";
+import { PageBackdrop } from "@/components/site/page-backdrop";
+import { ButtonGlass, ButtonRed, GlassCard, IconFor, JsonLd, SectionHeading } from "@/components/site/bits";
 import { Counter, Reveal, SplitWords, StaggerGroup, StaggerItem, easeOut } from "@/components/site/motion";
 import {
-  DoctorsCarousel, FaqAccordion, PackageCard, PostCard, ServiceCard, StatChip, TestimonialSlider,
+  DoctorsCarousel, FaqAccordion, PackageCard, PostCard, ServiceCard, TestimonialSlider,
 } from "@/components/site/cards";
 import { list, str } from "@/lib/content-schema";
 import type { SectionData } from "@/lib/content-schema";
@@ -51,31 +51,25 @@ export default function HomePage() {
     <>
       <JsonLd data={faqSchema} />
 
-      {/* ═══════════ HERO ═══════════ */}
+      {/* ═══════════ HERO — care in action (video or photographic backdrop) ═══════════ */}
       <section ref={heroRef} className="relative flex min-h-[100svh] items-center overflow-hidden" aria-label="Introduction">
         {/* background */}
         {settings.heroVideo ? (
-          <VideoBackground src={settings.heroVideo} poster={settings.heroPoster} />
+          <>
+            <VideoBackground src={settings.heroVideo} poster={settings.heroPoster} />
+            <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/72 to-ink/25" aria-hidden="true" />
+            <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
+          </>
         ) : (
-          <div className="absolute inset-0" aria-hidden="true">
-            <div className="bg-mesh-dark absolute inset-0" />
-            <HeroCanvas />
-            {/* logo ring motif — echoes the monogram */}
-            <div className="absolute -right-40 top-1/2 hidden -translate-y-1/2 lg:block">
-              <div className="relative h-[42rem] w-[42rem]">
-                <div className="absolute inset-0 rounded-full border border-crimson/12" />
-                <div className="absolute inset-12 rounded-full border border-crimson/8" />
-                <div className="spin-slow absolute inset-0 rounded-full border border-dashed border-crimson/15" />
-                <div className="pulse-dot absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-crimson glow-red" />
-              </div>
-            </div>
-            <div className="absolute inset-x-0 bottom-[18%] text-cyan/40">
-              <EcgDivider className="h-10" />
-            </div>
-          </div>
+          <PageBackdrop
+            config={data.backdrops?.["hero.home"]}
+            slotKey="hero.home"
+            priority
+            edge="none"
+            bottomFade
+            className="absolute inset-0"
+          />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/72 to-ink/25" aria-hidden="true" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-ink to-transparent" aria-hidden="true" />
 
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="container-x relative z-10 pb-28 pt-36 sm:pt-32">
           <motion.div
@@ -121,17 +115,17 @@ export default function HomePage() {
               </ButtonGlass>
             </motion.div>
 
-            {/* stat chips */}
+            {/* stats — hairline-separated serif numerals over the photo */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: easeOut } } }}
-              className="mt-11 flex flex-wrap gap-3"
+              className="mt-12 flex flex-wrap items-stretch gap-y-5 divide-x divide-porcelain/20 [&>div]:pl-7 [&>div]:pr-7 [&>div:first-child]:pl-0 [&>div:last-child]:pr-0"
             >
               {list(hero, "stats").map((s, i) => (
-                <div key={i} className="glass flex items-center gap-3 rounded-2xl px-5 py-3">
-                  <span className="font-display text-2xl font-bold text-gradient">
+                <div key={i} className="flex flex-col gap-1.5">
+                  <span className="num-serif text-3xl leading-none text-ice sm:text-[2.6rem]">
                     <Counter value={str(s as SectionData, "value")} />
                   </span>
-                  <span className="max-w-[9rem] text-[0.72rem] font-medium leading-tight text-ice-dim">
+                  <span className="max-w-[8.5rem] text-[0.66rem] font-semibold uppercase leading-snug tracking-[0.16em] text-porcelain/60">
                     {str(s as SectionData, "label")}
                   </span>
                 </div>
@@ -267,8 +261,8 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ═══════════ PATIENT JOURNEY (pinned) ═══════════ */}
-      {visible("home", "journey") && <JourneyPinned data={journey} />}
+      {/* ═══════════ PATIENT JOURNEY (pinned) — full-bleed photo band ═══════════ */}
+      {visible("home", "journey") && <JourneyPinned data={journey} backdrops={data.backdrops} />}
 
       {/* ═══════════ SERVICES GRID ═══════════ */}
       {visible("home", "services") && (
@@ -360,14 +354,17 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ═══════════ CALL FOR HELP BANNER ═══════════ */}
+      {/* ═══════════ CALL FOR HELP BANNER — full-bleed photo band ═══════════ */}
       {visible("home", "ctaHelp") && (
         <section className="relative section-pad">
           <div className="container-x">
             <Reveal>
-              <div className="relative overflow-hidden rounded-3xl border border-clinic-red/25 bg-gradient-to-br from-[#1a0d10] via-navy-2 to-ink p-8 sm:p-12 lg:p-16">
-                <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-clinic-red/15 blur-[100px]" aria-hidden="true" />
-                <div className="absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-brand/20 blur-[110px]" aria-hidden="true" />
+              <PageBackdrop
+                config={data.backdrops?.["band.call-help"]}
+                slotKey="band.call-help"
+                edge="curve"
+                className="overflow-hidden rounded-3xl p-8 sm:p-12 lg:p-16"
+              >
                 <div className="relative grid items-center gap-10 lg:grid-cols-[1.4fr_1fr]">
                   <div>
                     <h2 className="h1 text-ice">{str(ctaHelp, "title")}</h2>
@@ -394,7 +391,7 @@ export default function HomePage() {
                     </ButtonRed>
                   </div>
                 </div>
-              </div>
+              </PageBackdrop>
             </Reveal>
           </div>
         </section>
@@ -442,32 +439,35 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ═══════════ FINAL CTA ═══════════ */}
+      {/* ═══════════ FINAL CTA — full-bleed photo band ═══════════ */}
       {visible("home", "final") && (
-        <section className="relative overflow-hidden section-pad">
-          <div className="absolute inset-0 bg-gradient-to-b from-ink via-[#15090c] to-ink" aria-hidden="true" />
-          <div className="absolute left-1/2 top-1/2 h-72 w-[52rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/15 blur-[130px]" aria-hidden="true" />
-          <div className="container-x relative text-center">
-            <h2 className="h-display mx-auto max-w-3xl text-ice">
-              <SplitWords text={str(finalCta, "title")} />
-            </h2>
-            <Reveal delay={0.14}>
-              <p className="lead mx-auto mt-5 max-w-xl">{str(finalCta, "text")}</p>
-            </Reveal>
-            <Reveal delay={0.22}>
-              <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-                <ButtonRed onClick={() => navigate("/book")}>
-                  <CalendarCheck className="h-4 w-4" aria-hidden="true" />
-                  {str(finalCta, "ctaPrimary")}
-                </ButtonRed>
-                <ButtonGlass href={`tel:${settings.phoneIntl}`}>
-                  <PhoneCall className="h-4 w-4 text-cyan" aria-hidden="true" />
-                  {str(finalCta, "ctaSecondary")}
-                </ButtonGlass>
-              </div>
-            </Reveal>
-          </div>
-        </section>
+        <PageBackdrop
+          config={data.backdrops?.["band.final-cta"]}
+          slotKey="band.final-cta"
+          as="section"
+          edge="curve"
+          className="section-pad"
+          childClassName="container-x relative text-center"
+        >
+          <h2 className="h-display mx-auto max-w-3xl text-ice">
+            <SplitWords text={str(finalCta, "title")} />
+          </h2>
+          <Reveal delay={0.14}>
+            <p className="lead mx-auto mt-5 max-w-xl">{str(finalCta, "text")}</p>
+          </Reveal>
+          <Reveal delay={0.22}>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
+              <ButtonRed onClick={() => navigate("/book")}>
+                <CalendarCheck className="h-4 w-4" aria-hidden="true" />
+                {str(finalCta, "ctaPrimary")}
+              </ButtonRed>
+              <ButtonGlass href={`tel:${settings.phoneIntl}`}>
+                <PhoneCall className="h-4 w-4 text-crimson" aria-hidden="true" />
+                {str(finalCta, "ctaSecondary")}
+              </ButtonGlass>
+            </div>
+          </Reveal>
+        </PageBackdrop>
       )}
     </>
   );
@@ -488,8 +488,7 @@ function VideoBackground({ src, poster }: { src: string; poster: string }) {
   if (failed) {
     return (
       <div className="absolute inset-0" aria-hidden="true">
-        <div className="bg-mesh-dark absolute inset-0" />
-        <HeroCanvas />
+        <div className="bg-warm-drift absolute inset-0" />
       </div>
     );
   }
@@ -515,7 +514,7 @@ function VideoBackground({ src, poster }: { src: string; poster: string }) {
 
 /* ── pinned patient journey (desktop) + timeline (mobile) ── */
 
-function JourneyPinned({ data }: { data: SectionData }) {
+function JourneyPinned({ data, backdrops }: { data: SectionData; backdrops: Record<string, import("@/lib/backdrops").BackdropPublic> }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const steps = list(data, "steps");
 
@@ -564,10 +563,14 @@ function JourneyPinned({ data }: { data: SectionData }) {
 
   return (
     <section className="relative" aria-labelledby="journey-title" ref={containerRef}>
-      {/* pinned desktop experience */}
-      <div className="hidden min-h-screen items-center bg-gradient-to-b from-ink via-navy/70 to-ink lg:flex">
-        <div className="bg-grid absolute inset-0 opacity-40" aria-hidden="true" />
-        <div className="container-x relative grid items-center gap-16 lg:grid-cols-[1.05fr_1fr]">
+      {/* pinned desktop experience — full-bleed photographic band */}
+      <PageBackdrop
+        config={backdrops?.["band.journey"]}
+        slotKey="band.journey"
+        edge="none"
+        className="hidden min-h-screen items-center bg-gradient-to-b from-ink via-oxblood/45 to-ink lg:flex"
+        childClassName="container-x relative grid items-center gap-16 lg:grid-cols-[1.05fr_1fr]"
+      >
           <div>
             <p className="eyebrow mb-3 inline-flex items-center gap-2 text-cyan">
               <span className="pulse-dot inline-blockh h-2 w-2 rounded-full bg-clinic-red" aria-hidden="true" />
@@ -606,8 +609,7 @@ function JourneyPinned({ data }: { data: SectionData }) {
               </li>
             ))}
           </ol>
-        </div>
-      </div>
+      </PageBackdrop>
 
       {/* mobile timeline */}
       <div className="bg-mesh-dark grain section-pad lg:hidden">

@@ -45,7 +45,7 @@ export default function DoctorsPage() {
   return (
     <>
       <JsonLd data={physicianSchema} />
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Doctors", "ሐኪሞች")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.doctors" crumb={L("Doctors", "ሐኪሞች")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x">

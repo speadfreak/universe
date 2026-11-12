@@ -14,7 +14,7 @@ export default function ServicesPage() {
 
   return (
     <>
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Services", "አገልግሎቶች")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.services" crumb={L("Services", "አገልግሎቶች")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x">

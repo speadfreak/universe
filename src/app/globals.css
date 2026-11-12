@@ -594,20 +594,32 @@ html[lang="am"] .h-3 {
   }
 }
 
-@keyframes grid-drift {
-  from {
-    background-position: 0 0;
+/* PageBackdrop — slow Ken Burns drift (photo layer breathes, never spins) */
+@keyframes kenburns {
+  0% {
+    transform: scale(1.02) translate3d(0, 0, 0);
   }
-  to {
-    background-position: 64px 64px;
+  100% {
+    transform: scale(1.13) translate3d(-1.6%, -1.2%, 0);
   }
 }
-.bg-grid {
-  background-image:
-    linear-gradient(rgba(247, 244, 239, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(247, 244, 239, 0.045) 1px, transparent 1px);
-  background-size: 64px 64px;
-  animation: grid-drift 12s linear infinite;
+.backdrop-kenburns {
+  animation: kenburns 30s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.backdrop-fade-in {
+  animation: backdrop-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* custom cursor — porcelain ring on warm ink, crimson active state */
@@ -791,9 +803,9 @@ html[lang="am"] .h-3 {
   .ecg-draw,
   .pulse-dot,
   .float-y,
-  .bg-grid,
   .bg-warm-drift,
-  .spin-slow {
+  .spin-slow,
+  .backdrop-kenburns {
     animation: none !important;
   }
   .ecg-draw {

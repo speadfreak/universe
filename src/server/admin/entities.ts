@@ -143,10 +143,15 @@ export const ENTITIES: Record<string, EntityDef> = {
   },
 };
 
-/** Validate branch map embed URLs — only Google Maps embeds allowed. */
+/** Validate branch map embed URLs — only Google Maps embeds allowed.
+ *  Accepts both the classic /maps/embed?pb=… form and the keyless
+ *  https://maps.google.com/maps?q=…&output=embed / www.google.com/maps?q=…&output=embed form. */
 export function validateMapEmbed(url: string): boolean {
   if (!url) return true;
-  return /^https:\/\/www\.google\.com\/maps\/embed/.test(url);
+  if (/^https:\/\/www\.google\.com\/maps\/embed/.test(url)) return true;
+  if (/^https:\/\/maps\.google\.com\/maps\?[^]*output=embed/.test(url)) return true;
+  if (/^https:\/\/www\.google\.com\/maps\?[^]*output=embed/.test(url)) return true;
+  return false;
 }
 
 /** Sanitize an incoming body against the entity field map. */

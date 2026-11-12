@@ -10,6 +10,7 @@ function fallbackData(): SiteData {
     settings: SETTINGS_DEFAULTS,
     content: {},
     sectionsIndex: {},
+    backdrops: {},
     services: [],
     doctors: [],
     packages: [],

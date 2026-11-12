@@ -181,7 +181,10 @@ export function Header() {
             exit={{ opacity: 0, clipPath: "circle(0% at 92% 6%)" }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="bg-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
+            <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+              <div className="absolute -right-24 top-1/3 h-[26rem] w-[26rem] rounded-full border border-crimson/10" />
+              <div className="absolute -right-10 top-1/3 h-[26rem] w-[26rem] rounded-full border border-crimson/6" />
+            </div>
             <nav className="container-x relative flex flex-1 flex-col justify-center gap-1 overflow-y-auto py-24" aria-label="Mobile">
               {[...NAV, { key: "nav.resources", href: "/resources" }].map((item, i) => (
                 <motion.button

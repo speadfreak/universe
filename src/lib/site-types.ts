@@ -1,5 +1,6 @@
 import type { SiteSettings } from "@/lib/settings-defaults";
 import type { SectionData } from "@/lib/content-schema";
+import type { BackdropPublic } from "@/lib/backdrops";
 
 export type Localized = { en: string; am: string };
 
@@ -93,6 +94,8 @@ export type SiteData = {
   settings: SiteSettings;
   content: Record<string, { en: SectionData; am: SectionData }>;
   sectionsIndex: Record<string, { visible: boolean; sortOrder: number }>;
+  /** Photographic hero/band configs keyed by slot ("hero.about", "band.journey", …). */
+  backdrops: Record<string, BackdropPublic>;
   services: ServiceDTO[];
   doctors: DoctorDTO[];
   packages: PackageDTO[];

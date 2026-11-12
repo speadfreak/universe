@@ -32,7 +32,7 @@ export default function ResourcesPage() {
   return (
     <>
       <JsonLd data={faqSchema} />
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Patient Resources", "የታካሚ መረጃ")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.resources" crumb={L("Patient Resources", "የታካሚ መረጃ")} />
 
       {/* FAQ */}
       <section className="bg-mesh-dark grain relative section-pad">

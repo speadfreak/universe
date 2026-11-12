@@ -6,8 +6,10 @@ import ReactMarkdown from "react-markdown";
 import { ArrowLeft, CalendarDays, Check, Clock, Link2, List } from "lucide-react";
 import { useSite } from "@/components/site/site-context";
 import { ButtonGlass, JsonLd } from "@/components/site/bits";
+import { PageBackdrop } from "@/components/site/page-backdrop";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/site/motion";
 import { PostCard } from "@/components/site/cards";
+import { withImageFallback } from "@/lib/backdrops";
 import { toast } from "sonner";
 
 function slugify(text: string): string {
@@ -71,6 +73,12 @@ export default function BlogPostPage({ slug }: { slug: string }) {
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = encodeURIComponent(`${post.title} — Universe Medical Center`);
 
+  // Article hero backdrop — admin slot first, the post's own cover second.
+  const postBackdrop = withImageFallback(
+    data.backdrops?.["hero.post"],
+    post.coverImage ? [{ url: post.coverImage, alt: post.title, focal: { x: 0.5, y: 0.45 } }] : [],
+  );
+
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -84,9 +92,14 @@ export default function BlogPostPage({ slug }: { slug: string }) {
 
   return (
     <>
-      <article className="relative pb-10 pt-32 sm:pt-36">
-        <div className="absolute inset-0 bg-mesh-dark" aria-hidden="true" />
-        <div className="container-x relative">
+      <PageBackdrop
+        config={postBackdrop}
+        slotKey="hero.post"
+        as="article"
+        edge="none"
+        className="pb-10 pt-32 sm:pt-36"
+        childClassName="container-x relative"
+      >
           <Reveal>
             <button
               onClick={() => navigate("/blog")}
@@ -208,8 +221,7 @@ export default function BlogPostPage({ slug }: { slug: string }) {
               </ReactMarkdown>
             </Reveal>
           </div>
-        </div>
-      </article>
+      </PageBackdrop>
 
       {/* related */}
       {related.length > 0 && (

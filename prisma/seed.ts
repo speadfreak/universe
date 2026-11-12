@@ -488,6 +488,11 @@ async function seedFaqs() {
 }
 
 async function seedBranches() {
+  // Keyless Google Maps embeds (no API key needed, validated by validateMapEmbed).
+  const ADDIS_MAP =
+    "https://maps.google.com/maps?q=Lemi%20Kura%20Subcity%2C%20Ayat-Bole%20Arabsa%20Main%20Road%2C%20Addis%20Ababa%2C%20Ethiopia&z=15&output=embed";
+  const AMBO_MAP =
+    "https://maps.google.com/maps?q=Ambo%2C%20West%20Shoa%2C%20Oromia%20Region%2C%20Ethiopia&z=13&output=embed";
   const branches = [
     {
       nameEn: "Addis Ababa Branch (Universe Medical Center)",
@@ -497,7 +502,7 @@ async function seedBranches() {
       phone: "0116390354",
       hours: "Monday – Saturday: 8:30 AM – 5:30 PM · Sunday: Emergency only",
       hoursAm: "ሰኞ – ቅዳሜ፡ 8:30 – 5:30 · እሁድ፡ አስቸኳይ ብቻ",
-      mapEmbedUrl: "",
+      mapEmbedUrl: ADDIS_MAP,
       established: "Opened August 2022",
       noteEn: "The main Universe Medical Center branch.",
       order: 0,
@@ -510,7 +515,7 @@ async function seedBranches() {
       phone: "0116390354",
       hours: "Monday – Saturday: 8:30 AM – 5:30 PM · Sunday: Emergency only",
       hoursAm: "ሰኞ – ቅዳሜ፡ 8:30 – 5:30 · እሁድ፡ አስቸኳይ ብቻ",
-      mapEmbedUrl: "",
+      mapEmbedUrl: AMBO_MAP,
       established: "Established February 2021",
       noteEn: "Heran Clinic — the first branch, serving Ambo City.",
       order: 1,
@@ -519,8 +524,116 @@ async function seedBranches() {
   for (const b of branches) {
     const exists = await prisma.branch.findFirst({ where: { nameEn: b.nameEn } });
     if (!exists) await prisma.branch.create({ data: b });
+    else if (!exists.mapEmbedUrl) await prisma.branch.update({ where: { id: exists.id }, data: { mapEmbedUrl: b.mapEmbedUrl } });
   }
-  console.log("✓ branches (map embed URLs are set by the super admin in Settings/Branches)");
+  console.log("✓ branches (Google Maps embeds seeded — replace finer pins in Settings/Branches)");
+}
+
+/** Photographic page backdrops — registry slots seeded with the bundled
+ *  warm-graded photography (replace with real clinic photos via Admin → Page
+ *  backgrounds; gradient slots stay gradient-only by design). */
+async function seedBackdrops() {
+  const slots: Array<{
+    key: string;
+    mode: string;
+    images: unknown;
+    darkness: number;
+    warmth: number;
+    textSide: string;
+    parallax: boolean;
+  }> = [
+    {
+      key: "hero.home",
+      mode: "kenburns",
+      images: [{ url: "/img/backdrops/bd-home.jpg", alt: "A clinician listening to a patient at Universe Medical Center, warm window light", focal: { x: 0.5, y: 0.42 } }],
+      darkness: 0.58, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.about",
+      mode: "kenburns",
+      images: [{ url: "/img/backdrops/bd-about.jpg", alt: "The Universe Medical Center team outside the clinic building", focal: { x: 0.5, y: 0.4 } }],
+      darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.services",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-services.jpg", alt: "Modern diagnostic laboratory bench with warm amber light", focal: { x: 0.5, y: 0.45 } }],
+      darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.doctors",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-doctors.jpg", alt: "Consulting-room desk with a stethoscope in warm lamp light", focal: { x: 0.5, y: 0.45 } }],
+      darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.packages",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-packages.jpg", alt: "Reception desk greeting a mother and child for a checkup", focal: { x: 0.55, y: 0.45 } }],
+      darkness: 0.64, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.blog",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-blog.jpg", alt: "Editorial still life with a medical journal and tea", focal: { x: 0.5, y: 0.5 } }],
+      darkness: 0.62, warmth: 0.4, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.contact",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-contact.jpg", alt: "Universe Medical Center building exterior on a quiet street", focal: { x: 0.5, y: 0.45 } }],
+      darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.book",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-book.jpg", alt: "Calm, reassuring waiting area with warm chairs and plants", focal: { x: 0.5, y: 0.45 } }],
+      darkness: 0.64, warmth: 0.4, textSide: "left", parallax: true,
+    },
+    {
+      key: "hero.resources",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-resources.jpg", alt: "Health education leaflets on a warm wooden desk", focal: { x: 0.5, y: 0.5 } }],
+      darkness: 0.62, warmth: 0.4, textSide: "left", parallax: true,
+    },
+    {
+      key: "band.call-help",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-band-help.jpg", alt: "Hands holding a phone in warm dramatic light", focal: { x: 0.62, y: 0.45 } }],
+      darkness: 0.7, warmth: 0.5, textSide: "left", parallax: true,
+    },
+    {
+      key: "band.journey",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-band-journey.jpg", alt: "Patient walking with a nurse down a sunlit corridor", focal: { x: 0.6, y: 0.45 } }],
+      darkness: 0.66, warmth: 0.42, textSide: "left", parallax: true,
+    },
+    {
+      key: "band.final-cta",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-band-final.jpg", alt: "Doctor shaking hands with a smiling patient at dusk", focal: { x: 0.6, y: 0.45 } }],
+      darkness: 0.68, warmth: 0.45, textSide: "left", parallax: true,
+    },
+    {
+      key: "band.footer-top",
+      mode: "single",
+      images: [{ url: "/img/backdrops/bd-band-footer.jpg", alt: "Clinic building at dusk with warm glowing windows", focal: { x: 0.5, y: 0.4 } }],
+      darkness: 0.88, warmth: 0.3, textSide: "left", parallax: false,
+    },
+    // gradient-only placeholders — warm ink→oxblood fallback, no photo by design
+    { key: "hero.post", mode: "gradient", images: [], darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true },
+    { key: "hero.legal", mode: "gradient", images: [], darkness: 0.62, warmth: 0.42, textSide: "left", parallax: false },
+    { key: "hero.404", mode: "gradient", images: [], darkness: 0.66, warmth: 0.5, textSide: "left", parallax: false },
+  ];
+  let created = 0;
+  for (const s of slots) {
+    const exists = await prisma.backdropSlot.findUnique({ where: { key: s.key } });
+    if (!exists) {
+      await prisma.backdropSlot.create({ data: s as Prisma.BackdropSlotCreateInput });
+      created++;
+    }
+  }
+  console.log(`✓ backdrops (${created} seeded, ${slots.length - created} already present)`);
 }
 
 async function seedGallery() {
@@ -554,6 +667,7 @@ async function main() {
   await seedFaqs();
   await seedBranches();
   await seedGallery();
+  await seedBackdrops();
   console.log("\n🌱 Seed complete. Sign in at /#/admin with the ADMIN_EMAIL / ADMIN_PASSWORD from your .env");
 }
 

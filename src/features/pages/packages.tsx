@@ -15,7 +15,7 @@ export default function PackagesPage() {
 
   return (
     <>
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Packages", "ጥቅሎች")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.packages" crumb={L("Packages", "ጥቅሎች")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x">

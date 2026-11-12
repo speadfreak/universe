@@ -21,9 +21,24 @@ export default function ContactPage() {
   const [activeBranch, setActiveBranch] = useState(0);
 
   const validBranches = useMemo(
-    () => data.branches.filter((b) => b.mapEmbedUrl.startsWith("https://www.google.com/maps/embed")),
+    () =>
+      data.branches.filter((b) => {
+        const u = b.mapEmbedUrl;
+        return (
+          u.startsWith("https://www.google.com/maps/embed") ||
+          (u.startsWith("https://maps.google.com/maps?") || u.startsWith("https://www.google.com/maps?")) && u.includes("output=embed")
+        );
+      }),
     [data.branches]
   );
+
+  /** Street-view link for the currently selected branch. */
+  const directionsUrl = useMemo(() => {
+    const b = validBranches[activeBranch];
+    if (!b) return "https://www.google.com/maps";
+    const q = b.mapEmbedUrl.includes("?") ? (b.mapEmbedUrl.split("?")[1] || "").split("&").find((p) => p.startsWith("q=")) : null;
+    return q ? `https://www.google.com/maps?${q}` : `https://www.google.com/maps/search/${encodeURIComponent(b.addressEn)}`;
+  }, [validBranches, activeBranch]);
 
   const {
     register,
@@ -58,7 +73,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} crumb={L("Contact", "አግኙን")} />
+      <PageHero title={str(hero, "title")} subtitle={str(hero, "subtitle")} slot="hero.contact" crumb={L("Contact", "አግኙን")} />
 
       <section className="bg-mesh-dark grain relative section-pad">
         <div className="container-x grid gap-12 lg:grid-cols-[1.15fr_1fr]">
@@ -180,12 +195,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* map */}
+      {/* map — cinematic Google iframe with warm frame */}
       <section className="relative bg-navy/60 pb-4 pt-0">
         <div className="container-x">
           {validBranches.length > 0 && (
             <Reveal>
-              <div className="glass overflow-hidden rounded-3xl border-white/10">
+              <div className="glass overflow-hidden rounded-3xl border-white/10 shadow-plate">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/8 px-6 py-4">
                   <h2 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-ice">
                     {L("Find us", "ያግኙን")} — {L(validBranches[activeBranch]?.nameEn || "", validBranches[activeBranch]?.nameAm || "")}
@@ -209,15 +224,33 @@ export default function ContactPage() {
                     </div>
                   )}
                 </div>
-                <iframe
-                  key={validBranches[activeBranch]?.id}
-                  src={validBranches[activeBranch]?.mapEmbedUrl}
-                  title={`${validBranches[activeBranch]?.nameEn} location map`}
-                  className="h-[420px] w-full"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
+                <div className="relative">
+                  <iframe
+                    key={validBranches[activeBranch]?.id}
+                    src={validBranches[activeBranch]?.mapEmbedUrl}
+                    title={`${validBranches[activeBranch]?.nameEn} location map`}
+                    className="h-[460px] w-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                  />
+                  {/* address chip + directions */}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent p-5">
+                    <p className="pointer-events-auto max-w-md rounded-2xl glass px-4 py-3 text-sm font-semibold text-ice">
+                      <MapPin className="mr-2 inline h-4 w-4 text-crimson" aria-hidden="true" />
+                      {L(validBranches[activeBranch]?.addressEn || "", validBranches[activeBranch]?.addressAm || "")}
+                    </p>
+                    <a
+                      href={directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer-events-auto inline-flex min-h-11 items-center gap-2 rounded-full bg-clinic-red px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wider text-white transition hover:bg-crimson-deep"
+                    >
+                      <Navigation className="h-4 w-4" aria-hidden="true" />
+                      {L("Open in Google Maps", "በጎግል ካርታ ይክፈቱ")}
+                    </a>
+                  </div>
+                </div>
               </div>
             </Reveal>
           )}
