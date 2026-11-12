@@ -6,6 +6,7 @@ import {
   Trash2, UploadCloud, X,
 } from "lucide-react";
 import { api, compressImage, formatBytes, uploadMedia, type MediaItem } from "./admin-api";
+import { compressVideo } from "@/lib/video-client";
 import { ModalShell } from "./admin-content";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -221,9 +222,18 @@ export function AdminMedia() {
     async (files: FileList | File[]) => {
       setUploading(true);
       for (const original of Array.from(files)) {
-        const file = await compressImage(original);
-        const res = await uploadMedia(file);
-        if (!res.ok) toast.error(`${original.name}: ${res.error.message}`);
+        try {
+          // Videos are re-encoded to lean fast-start MP4s in the browser;
+          // images pass through the canvas compressor. Failures fall back to
+          // the original file, so uploads never block.
+          const file = original.type.startsWith("video/")
+            ? await compressVideo(original)
+            : await compressImage(original);
+          const res = await uploadMedia(file);
+          if (!res.ok) toast.error(`${original.name}: ${res.error.message}`);
+        } catch {
+          toast.error(`${original.name}: could not process this file`);
+        }
       }
       setUploading(false);
       toast.success("Upload complete");
@@ -489,12 +499,19 @@ export function MediaPickerModal({
     e.target.value = "";
     if (!file) return;
     setUploading(true);
-    const compressed = await compressImage(file, 1920, 0.82);
-    const res = await uploadMedia(compressed);
-    setUploading(false);
-    if (!res.ok) { toast.error(res.error.message); return; }
-    toast.success("Uploaded — inserted");
-    pick(res.data);
+    try {
+      const optimized = file.type.startsWith("video/")
+        ? await compressVideo(file)
+        : await compressImage(file, 1920, 0.82);
+      const res = await uploadMedia(optimized);
+      if (!res.ok) { toast.error(res.error.message); return; }
+      toast.success("Uploaded — inserted");
+      pick(res.data);
+    } catch {
+      toast.error("Could not process this file");
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (

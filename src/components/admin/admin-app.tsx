@@ -5,7 +5,8 @@ import Image from "next/image";
 import {
   LayoutDashboard, Layers, LibraryBig, Inbox, Settings2, ScrollText, LogOut, LogIn,
   Users, Stethoscope, Package, Newspaper, MessageSquareQuote, HelpCircle, Images, Building2,
-  Loader2, ExternalLink, Lock, Moon, Sun, UserRoundCog, Wallpaper,
+  Loader2, ExternalLink, Lock, Menu, Moon, Sun, UserRoundCog, Wallpaper,
+  PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { api, type AdminUser } from "./admin-api";
 import { AdminDashboard } from "./admin-dashboard";
@@ -75,6 +76,7 @@ export default function AdminApp() {
   const [me, setMe] = useState<AdminUser | null | undefined>(undefined);
   const [view, setView] = useState<View>({ kind: "dashboard" });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [rail, setRail] = useState(false); // desktop collapsible icon rail
   const [dark, setDark] = useState(false);
 
   const checkSession = useCallback(async () => {
@@ -89,6 +91,7 @@ export default function AdminApp() {
   useEffect(() => {
     document.title = "Admin · Universe Medical Center";
     setDark(window.localStorage.getItem("umc-admin-dark") === "1");
+    setRail(window.localStorage.getItem("umc-admin-rail") === "1");
   }, []);
 
   const toggleDark = () => {
@@ -96,6 +99,22 @@ export default function AdminApp() {
       window.localStorage.setItem("umc-admin-dark", v ? "0" : "1");
       return !v;
     });
+  };
+
+  const toggleRail = () => {
+    setRail((v) => {
+      window.localStorage.setItem("umc-admin-rail", v ? "0" : "1");
+      return !v;
+    });
+  };
+
+  const goSite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Deterministic exit: reset the hash, then hard-navigate. A wedged SPA
+    // state (Lenis, ScrollTrigger, a stuck route) can never trap the admin
+    // panel — the site always comes back, every time, on every device.
+    window.location.hash = "#/";
+    window.location.reload();
   };
 
   if (me === undefined) {
@@ -116,28 +135,38 @@ export default function AdminApp() {
   })).filter((g) => g.items.length > 0);
 
   const currentRoles = (roles: string[]) => roles.includes(me.role);
+  const initials = (me.name || me.email || "U").split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
 
   return (
     <div className={cn("admin-root min-h-screen bg-background text-foreground", dark && "admin-dark")} style={{ fontFamily: "var(--font-body)" }}>
       <div className="flex min-h-screen">
-        {/* sidebar — warm ink, 3px crimson active bar */}
+        {/* sidebar — warm ink, 3px crimson active bar.
+            Mobile: slide-in drawer. Desktop: sticky full-height rail that
+            NEVER scrolls with the page, collapsible to a pure icon rail. */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto bg-ink text-porcelain transition-transform duration-300 lg:static lg:translate-x-0",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            "fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-ink text-porcelain transition-all duration-300 lg:sticky lg:top-0 lg:z-30 lg:h-dvh lg:translate-x-0 lg:overflow-y-auto lg:overflow-x-hidden",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full",
+            rail ? "lg:w-[4.75rem]" : "lg:w-64"
           )}
         >
-          <div className="flex h-16 items-center gap-2.5 border-b border-porcelain/10 px-5">
+          <div className={cn("flex h-16 shrink-0 items-center gap-2.5 border-b border-porcelain/10 px-5", rail && "lg:justify-center lg:px-0")}>
             <Image src="/logo.png" alt="UMC" width={40} height={40} className="h-9 w-auto" />
-            <div>
+            <div className={cn(rail && "lg:hidden")}>
               <p className="font-display text-[0.95rem] tracking-tight">UMC Admin</p>
               <p className="text-[0.62rem] text-porcelain/50">Universe Medical Center</p>
             </div>
           </div>
-          <nav className="px-3 py-4">
-            {allowedNav.map((group) => (
-              <div key={group.section} className="mb-5">
-                <p className="px-3 pb-2 text-[0.58rem] font-bold uppercase tracking-[0.22em] text-porcelain/40">{group.section}</p>
+          {/* min-h-0 lets the nav shrink and scroll internally so the user
+              footer stays pinned at the rail bottom instead of being pushed
+              off-screen on short viewports */}
+          <nav className={cn("min-h-0 flex-1 overflow-y-auto px-3 py-4", rail && "lg:px-2.5")}>
+            {allowedNav.map((group, gi) => (
+              <div
+                key={group.section}
+                className={cn("mb-5", rail && gi > 0 && "lg:border-t lg:border-porcelain/10 lg:pt-4")}
+              >
+                <p className={cn("px-3 pb-2 text-[0.58rem] font-bold uppercase tracking-[0.22em] text-porcelain/40", rail && "lg:hidden")}>{group.section}</p>
                 <ul className="space-y-0.5">
                   {group.items.map((item, i) => {
                     const active = JSON.stringify(item.view) === JSON.stringify(view);
@@ -148,8 +177,11 @@ export default function AdminApp() {
                             setView(item.view);
                             setSidebarOpen(false);
                           }}
+                          title={rail ? item.label : undefined}
+                          aria-label={item.label}
                           className={cn(
                             "relative flex w-full items-center gap-3 rounded-[8px] px-3 py-2.5 text-[0.83rem] font-medium transition-colors",
+                            rail && "lg:justify-center lg:px-0",
                             active ? "bg-porcelain/8 text-porcelain" : "text-porcelain/55 hover:bg-porcelain/5 hover:text-porcelain"
                           )}
                         >
@@ -161,8 +193,8 @@ export default function AdminApp() {
                             )}
                             aria-hidden="true"
                           />
-                          <item.icon className="h-4 w-4" />
-                          {item.label}
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          <span className={cn("truncate", rail && "lg:hidden")}>{item.label}</span>
                         </button>
                       </li>
                     );
@@ -171,9 +203,25 @@ export default function AdminApp() {
               </div>
             ))}
           </nav>
-          <div className="border-t border-porcelain/10 p-4">
-            <p className="truncate text-xs font-semibold text-porcelain">{me.name || me.email}</p>
-            <p className="text-[0.62rem] uppercase tracking-wider text-crimson">{me.role.replace("_", " ")}</p>
+          <div
+            className={cn(
+              "mt-auto shrink-0 border-t border-porcelain/10 p-4",
+              rail && "lg:flex lg:justify-center lg:p-3"
+            )}
+          >
+            <div className={cn(rail && "lg:hidden")}>
+              <p className="truncate text-xs font-semibold text-porcelain">{me.name || me.email}</p>
+              <p className="text-[0.62rem] uppercase tracking-wider text-crimson">{me.role.replace("_", " ")}</p>
+            </div>
+            <div
+              className={cn(
+                "hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson font-body text-[0.7rem] font-bold text-white",
+                rail && "lg:flex"
+              )}
+              title={`${me.name || me.email} · ${me.role.replace("_", " ")}`}
+            >
+              {initials}
+            </div>
           </div>
         </aside>
 
@@ -184,13 +232,23 @@ export default function AdminApp() {
         {/* main */}
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-border bg-background px-4 sm:px-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] border border-border lg:hidden"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Open menu"
               >
-                <Layers className="h-4 w-4" />
+                <Menu className="h-4 w-4" />
+              </button>
+              {/* desktop collapse/expand — persists across sessions */}
+              <button
+                className="hidden h-10 w-10 items-center justify-center rounded-[8px] border border-border text-muted-foreground transition hover:border-crimson/50 hover:text-crimson lg:inline-flex"
+                onClick={toggleRail}
+                aria-label={rail ? "Expand sidebar" : "Collapse sidebar"}
+                aria-pressed={rail}
+                title={rail ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {rail ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
               </button>
               <h1 className="font-display text-lg tracking-tight sm:text-xl">{viewTitle(view)}</h1>
             </div>
@@ -204,6 +262,7 @@ export default function AdminApp() {
               </button>
               <a
                 href="#/"
+                onClick={goSite}
                 className="inline-flex items-center gap-1.5 rounded-[8px] border border-border px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:border-crimson/50 hover:text-crimson"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -335,7 +394,17 @@ function AdminLogin({ onLogin }: { onLogin: (user: AdminUser) => void }) {
           Authorized staff only. Sessions are cookie-based, server-verified, and audited.
         </p>
         <p className="mt-3 text-center">
-          <a href="#/" className="text-xs font-semibold text-porcelain/70 underline-offset-4 hover:text-porcelain hover:underline">← Back to website</a>
+          <a
+            href="#/"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.hash = "#/";
+              window.location.reload();
+            }}
+            className="text-xs font-semibold text-porcelain/70 underline-offset-4 hover:text-porcelain hover:underline"
+          >
+            ← Back to website
+          </a>
         </p>
       </div>
     </div>

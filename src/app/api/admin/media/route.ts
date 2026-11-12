@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml",
-  "video/mp4", "video/webm", "application/pdf",
+  "video/mp4", "video/webm", "video/quicktime", "application/pdf",
 ]);
 const MAX_SIZE = 25 * 1024 * 1024; // 25MB
 

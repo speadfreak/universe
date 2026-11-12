@@ -2,7 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Loader2, Save, UploadCloud, Palette, ShieldAlert, ShieldCheck } from "lucide-react";
-import { api, compressImage, uploadMedia, type MediaItem } from "./admin-api";
+import { api, compressImage, formatBytes, uploadMedia, type MediaItem } from "./admin-api";
+import { compressVideo } from "@/lib/video-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { MediaPickerModal } from "./admin-media";
@@ -25,6 +26,7 @@ export function AdminSettings({ role }: { role: string }) {
   const [saving, setSaving] = useState(false);
   const [picker, setPicker] = useState<"heroVideo" | "heroPoster" | "logoUrl" | null>(null);
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoStage, setVideoStage] = useState<number | null>(null);
 
   useEffect(() => {
     api.get<Settings>("/api/admin/settings").then((res) => {
@@ -45,9 +47,27 @@ export function AdminSettings({ role }: { role: string }) {
 
   async function uploadHeroVideo(file: File) {
     setUploadingVideo(true);
-    const res = await uploadMedia(file);
-    setUploadingVideo(false);
-    if (res.ok) { set("heroVideo", res.data.url); toast.success("Video uploaded — press Save"); } else toast.error(res.error.message);
+    setVideoStage(0);
+    try {
+      // Optimize in the browser first: ≤1280px H.264, faststart, audio
+      // stripped (the hero plays muted) — typically 60–90% smaller, so the
+      // live hero video starts streaming almost immediately.
+      const optimized = await compressVideo(file, {
+        keepAudio: false,
+        maxDim: 1280,
+        onProgress: (r) => setVideoStage(Math.round(r * 100)),
+      });
+      const saved = optimized.size < file.size;
+      if (saved) toast.success(`Optimized ${formatBytes(file.size)} → ${formatBytes(optimized.size)}`);
+      const res = await uploadMedia(optimized);
+      if (res.ok) { set("heroVideo", res.data.url); toast.success("Video uploaded — press Save"); }
+      else toast.error(res.error.message);
+    } catch {
+      toast.error("Could not process that video — try a smaller file.");
+    } finally {
+      setUploadingVideo(false);
+      setVideoStage(null);
+    }
   }
 
   async function save() {
@@ -145,10 +165,22 @@ export function AdminSettings({ role }: { role: string }) {
           <div className="flex gap-2">
             <input value={s.heroVideo} onChange={(e) => set("heroVideo", e.target.value)} placeholder="empty = warm gradient + ECG fallback" className={inputCls} />
             <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-[10px] border border-border px-3 text-xs font-bold text-muted-foreground transition hover:border-crimson/50 hover:text-crimson">
-              {uploadingVideo ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UploadCloud className="h-3.5 w-3.5" />} Upload
-              <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={(e) => e.target.files?.[0] && void uploadHeroVideo(e.target.files[0])} />
+              {uploadingVideo ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {videoStage !== null && videoStage > 0 ? `Optimizing ${videoStage}%` : "Preparing"}
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="h-3.5 w-3.5" /> Upload
+                </>
+              )}
+              <input type="file" accept="video/mp4,video/webm,video/quicktime" className="hidden" disabled={uploadingVideo} onChange={(e) => e.target.files?.[0] && void uploadHeroVideo(e.target.files[0])} />
             </label>
           </div>
+          <p className="mt-1.5 text-[0.68rem] leading-relaxed text-muted-foreground">
+            Uploaded videos are auto-optimized in your browser (≤1280px H.264 + faststart, audio stripped — the hero plays muted) before upload, so the hero streams fast. Keep clips under ~60s for best results.
+          </p>
         </Row>
         <Row label="Hero poster image"><PickerInput value={s.heroPoster} onChange={(v) => set("heroPoster", v)} onPick={() => setPicker("heroPoster")} /></Row>
         <Row label="Logo"><PickerInput value={s.logoUrl} onChange={(v) => set("logoUrl", v)} onPick={() => setPicker("logoUrl")} /></Row>

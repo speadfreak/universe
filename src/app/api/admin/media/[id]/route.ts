@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { audit, jsonError } from "@/server/admin/entities";
+import { cacheInvalidate } from "@/lib/media-cache";
 
 export const runtime = "nodejs";
 
@@ -48,6 +49,7 @@ export async function DELETE(req: Request, { params }: Ctx) {
 
   try {
     await db.mediaAsset.delete({ where: { id } });
+    cacheInvalidate(id);
     await audit(admin, "deleted", "media", id);
     return NextResponse.json({ ok: true });
   } catch (err) {

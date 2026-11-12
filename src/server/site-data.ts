@@ -1,9 +1,34 @@
 import { db } from "@/lib/db";
 import { SETTINGS_DEFAULTS, type SiteSettings } from "@/lib/settings-defaults";
 import { publicBackdropMap, type BackdropRow } from "@/lib/backdrops";
+import { resolveMapEmbedUrl } from "@/lib/map-embed";
 import type {
   BranchDTO, DoctorDTO, FaqDTO, GalleryDTO, PackageDTO, PostDTO, SectionRow, ServiceDTO, SiteData, TestimonialDTO,
 } from "@/lib/site-types";
+
+/**
+ * Legacy backdrop defaults shipped with the first photographic release.
+ * The footer band was seeded at darkness 0.88 (photo nearly invisible).
+ * When the new dusk photography replaced the bundled image, that darkness
+ * had to come down so the picture actually reads. Rows that still carry the
+ * exact legacy value AND the bundled image are transparently upgraded here;
+ * anything an admin tuned by hand (slider ≠ 0.88, custom media URL) is
+ * always respected.
+ */
+const LEGACY_FOOTER_DARKNESS = 0.88;
+const FOOTER_DARKNESS_UPGRADED = 0.74;
+const BUNDLED_FOOTER_IMAGE = "/img/backdrops/bd-band-footer.jpg";
+
+function upgradeLegacyBackdropRows(rows: BackdropRow[]): BackdropRow[] {
+  return rows.map((r) => {
+    if (r.key !== "band.footer-top") return r;
+    if (r.darkness !== LEGACY_FOOTER_DARKNESS) return r;
+    const images = Array.isArray(r.images) ? (r.images as Array<{ url?: string }>) : [];
+    const first = images[0];
+    if (!first || first.url !== BUNDLED_FOOTER_IMAGE) return r;
+    return { ...r, darkness: FOOTER_DARKNESS_UPGRADED };
+  });
+}
 
 function asArray<T>(v: unknown, fallback: T[]): T[] {
   return Array.isArray(v) ? (v as T[]) : fallback;
@@ -44,7 +69,7 @@ export async function getSiteData(): Promise<SiteData> {
     ]);
 
   const backdrops = publicBackdropMap(
-    backdropRows as unknown as BackdropRow[],
+    upgradeLegacyBackdropRows(backdropRows as unknown as BackdropRow[]),
     services.map((sv) => ({ slug: sv.slug, image: sv.image, titleEn: sv.titleEn, titleAm: sv.titleAm })),
   );
 
@@ -139,7 +164,7 @@ export async function getSiteData(): Promise<SiteData> {
     addressEn: b.addressEn, addressAm: b.addressAm,
     phone: b.phone,
     hours: b.hours, hoursAm: b.hoursAm,
-    mapEmbedUrl: b.mapEmbedUrl,
+    mapEmbedUrl: resolveMapEmbedUrl(b.nameEn, b.mapEmbedUrl),
     established: b.established,
     noteEn: b.noteEn,
   }));

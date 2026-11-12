@@ -185,46 +185,52 @@ export function Header() {
               <div className="absolute -right-24 top-1/3 h-[26rem] w-[26rem] rounded-full border border-crimson/10" />
               <div className="absolute -right-10 top-1/3 h-[26rem] w-[26rem] rounded-full border border-crimson/6" />
             </div>
-            <nav className="container-x relative flex flex-1 flex-col justify-center gap-1 overflow-y-auto py-24" aria-label="Mobile">
-              {[...NAV, { key: "nav.resources", href: "/resources" }].map((item, i) => (
-                <motion.button
-                  key={item.href}
-                  onClick={() => {
-                    setOpen(false);
-                    navigate(item.href);
-                  }}
-                  className={cn(
-                    "group flex items-center justify-between border-b border-white/6 py-4 text-left",
-                    isActive(item.href) ? "text-cyan" : "text-ice"
-                  )}
-                  initial={{ opacity: 0, x: -26 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.12 + i * 0.055, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            {/* my-auto wrapper — safe centering: centers when the menu fits,
+                scrolls naturally when it overflows (justify-center + overflow
+                clips the TOP items, which collided the Home link under the
+                header and made it unclickable on small phones) */}
+            <nav className="container-x relative flex flex-1 flex-col overflow-y-auto overscroll-contain py-24" aria-label="Mobile">
+              <div className="my-auto flex flex-col gap-1">
+                {[...NAV, { key: "nav.resources", href: "/resources" }].map((item, i) => (
+                  <motion.button
+                    key={item.href}
+                    onClick={() => {
+                      setOpen(false);
+                      navigate(item.href);
+                    }}
+                    className={cn(
+                      "group flex min-h-[3.6rem] w-full items-center justify-between border-b border-white/6 py-3 text-left",
+                      isActive(item.href) ? "text-cyan" : "text-ice"
+                    )}
+                    initial={{ opacity: 0, x: -26 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.12 + i * 0.055, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span className="font-display text-[1.7rem] font-bold tracking-tight">{t(item.key)}</span>
+                    <span className="text-xs tabular-nums text-ice-dim/50">0{i + 1}</span>
+                  </motion.button>
+                ))}
+                <motion.div
+                  className="mt-8 flex flex-col gap-4 pb-6"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.55, duration: 0.5 }}
                 >
-                  <span className="font-display text-[1.7rem] font-bold tracking-tight">{t(item.key)}</span>
-                  <span className="text-xs tabular-nums text-ice-dim/50">0{i + 1}</span>
-                </motion.button>
-              ))}
-              <motion.div
-                className="mt-8 flex flex-col gap-4"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.55, duration: 0.5 }}
-              >
-                <button
-                  onClick={() => navigate("/book")}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-clinic-red font-display font-semibold text-white glow-red"
-                >
-                  {t("nav.book")}
-                </button>
-                <a
-                  href={`tel:${settings.phoneIntl}`}
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full glass font-medium text-ice"
-                >
-                  <Phone className="h-4 w-4 text-cyan" /> {settings.phone}
-                </a>
-                <p className="mt-2 text-center text-xs text-ice-dim">{L("Addis Ababa & Ambo", "አዲስ አበባ እና አምቦ")} · {settings.email}</p>
-              </motion.div>
+                  <button
+                    onClick={() => navigate("/book")}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-clinic-red font-display font-semibold text-white glow-red"
+                  >
+                    {t("nav.book")}
+                  </button>
+                  <a
+                    href={`tel:${settings.phoneIntl}`}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full glass font-medium text-ice"
+                  >
+                    <Phone className="h-4 w-4 text-cyan" /> {settings.phone}
+                  </a>
+                  <p className="mt-2 text-center text-xs text-ice-dim">{L("Addis Ababa & Ambo", "አዲስ አበባ እና አምቦ")} · {settings.email}</p>
+                </motion.div>
+              </div>
             </nav>
           </motion.div>
         )}

@@ -11,6 +11,13 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { scryptSync, randomBytes } from "crypto";
+import { UNIVERSE_MAP_EMBED } from "../src/lib/map-embed";
+
+/** Legacy keyless address-search embeds that shipped before the real pin. */
+const LEGACY_MAP_DEFAULTS = new Set([
+  "https://maps.google.com/maps?q=Lemi%20Kura%20Subcity%2C%20Ayat-Bole%20Arabsa%20Main%20Road%2C%20Addis%20Ababa%2C%20Ethiopia&z=15&output=embed",
+  "https://www.google.com/maps?q=Lemi%20Kura%20Subcity%2C%20Ayat-Bole%20Arabsa%20Main%20Road%2C%20Addis%20Ababa%2C%20Ethiopia&z=15&output=embed",
+]);
 
 /** Prefer a postgres:// URL; fall back to the .env file when the shell exports a non-postgres placeholder. */
 function resolveUrl(): string {
@@ -488,9 +495,10 @@ async function seedFaqs() {
 }
 
 async function seedBranches() {
-  // Keyless Google Maps embeds (no API key needed, validated by validateMapEmbed).
-  const ADDIS_MAP =
-    "https://maps.google.com/maps?q=Lemi%20Kura%20Subcity%2C%20Ayat-Bole%20Arabsa%20Main%20Road%2C%20Addis%20Ababa%2C%20Ethiopia&z=15&output=embed";
+  // Real Universe Medical Center pin (client-provided embed snippet) + the
+  // keyless Ambo search embed. resolveMapEmbedUrl also upgrades live rows
+  // that still carry the legacy defaults.
+  const ADDIS_MAP = UNIVERSE_MAP_EMBED;
   const AMBO_MAP =
     "https://maps.google.com/maps?q=Ambo%2C%20West%20Shoa%2C%20Oromia%20Region%2C%20Ethiopia&z=13&output=embed";
   const branches = [
@@ -524,9 +532,12 @@ async function seedBranches() {
   for (const b of branches) {
     const exists = await prisma.branch.findFirst({ where: { nameEn: b.nameEn } });
     if (!exists) await prisma.branch.create({ data: b });
-    else if (!exists.mapEmbedUrl) await prisma.branch.update({ where: { id: exists.id }, data: { mapEmbedUrl: b.mapEmbedUrl } });
+    else if (!exists.mapEmbedUrl || LEGACY_MAP_DEFAULTS.has(exists.mapEmbedUrl)) {
+      // upgrade legacy keyless search embeds to the real pins
+      await prisma.branch.update({ where: { id: exists.id }, data: { mapEmbedUrl: b.mapEmbedUrl } });
+    }
   }
-  console.log("✓ branches (Google Maps embeds seeded — replace finer pins in Settings/Branches)");
+  console.log("✓ branches (Universe Medical Center pin + Google Maps embeds seeded)");
 }
 
 /** Photographic page backdrops — registry slots seeded with the bundled
@@ -618,7 +629,7 @@ async function seedBackdrops() {
       key: "band.footer-top",
       mode: "single",
       images: [{ url: "/img/backdrops/bd-band-footer.jpg", alt: "Clinic building at dusk with warm glowing windows", focal: { x: 0.5, y: 0.4 } }],
-      darkness: 0.88, warmth: 0.3, textSide: "left", parallax: false,
+      darkness: 0.74, warmth: 0.3, textSide: "left", parallax: false,
     },
     // gradient-only placeholders — warm ink→oxblood fallback, no photo by design
     { key: "hero.post", mode: "gradient", images: [], darkness: 0.62, warmth: 0.42, textSide: "left", parallax: true },

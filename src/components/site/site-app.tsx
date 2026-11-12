@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useLayoutEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SiteProvider, useSite } from "./site-context";
 import { SmoothScroll } from "./smooth-scroll";
@@ -136,12 +136,13 @@ function PublicChrome() {
 }
 
 export function SiteApp({ data }: { data: SiteData }) {
-  const isAdmin = typeof window !== "undefined" && window.location.hash.startsWith("#/admin");
+  // The admin route is resolved after mount (the server never sees the URL
+  // hash), so the first client render matches SSR and hydration never tears.
+  const [admin, setAdmin] = useState(false);
 
-  // Re-check admin route on hash change
-  const [admin, setAdmin] = useState(isAdmin);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const onHash = () => setAdmin(window.location.hash.startsWith("#/admin"));
+    onHash();
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);

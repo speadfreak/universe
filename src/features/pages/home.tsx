@@ -7,6 +7,7 @@ import {
   ArrowRight, BadgeCheck, CalendarCheck, ChevronDown, CheckCircle2, PhoneCall,
 } from "lucide-react";
 import { useSite } from "@/components/site/site-context";
+import { cn } from "@/lib/utils";
 import { PageBackdrop } from "@/components/site/page-backdrop";
 import { ButtonGlass, ButtonRed, GlassCard, IconFor, JsonLd, SectionHeading } from "@/components/site/bits";
 import { Counter, Reveal, SplitWords, StaggerGroup, StaggerItem, easeOut } from "@/components/site/motion";
@@ -473,11 +474,15 @@ export default function HomePage() {
   );
 }
 
-/* ── video background with graceful fallback ──────────────── */
+/* ── video background with graceful fallback ────────────────
+   Performance notes: the poster paints instantly (image), the video streams
+   via HTTP Range from /api/media (206 partial responses), and only fades in
+   once the first frames can actually play — so the hero never shows a black
+   rectangle while a large file is still downloading. */
 
 function VideoBackground({ src, poster }: { src: string; poster: string }) {
   const [failed, setFailed] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setFailed(true);
@@ -495,15 +500,24 @@ function VideoBackground({ src, poster }: { src: string; poster: string }) {
 
   return (
     <div className="absolute inset-0" aria-hidden="true">
+      {/* poster paints instantly while the video streams in */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+        style={{ backgroundImage: poster ? `url(${JSON.stringify(poster).slice(1, -1)})` : undefined, opacity: ready ? 0 : 1 }}
+      />
       <video
-        ref={videoRef}
-        className="h-full w-full object-cover"
+        className={cn("h-full w-full object-cover transition-opacity duration-700", ready ? "opacity-100" : "opacity-0")}
         autoPlay
         muted
         loop
         playsInline
         preload="metadata"
         poster={poster || undefined}
+        disablePictureInPicture
+        disableRemotePlayback
+        tabIndex={-1}
+        onCanPlay={() => setReady(true)}
+        onPlaying={() => setReady(true)}
         onError={() => setFailed(true)}
       >
         <source src={src} />

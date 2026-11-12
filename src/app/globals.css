@@ -244,6 +244,15 @@ html[lang="am"] body {
   }
 }
 
+/* belt-and-braces: on touch/coarse pointers the native cursor always wins,
+   even if the JS state leaked (device emulation, hybrid laptops, etc.) */
+@media (hover: none), (pointer: coarse) {
+  .cursor-native-off,
+  .cursor-native-off * {
+    cursor: auto !important;
+  }
+}
+
 /* skip link */
 .skip-link {
   position: fixed;
